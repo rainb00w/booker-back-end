@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const createError = require('http-errors');
-const { passwordGeneration, passwordCompare } = require("../service/passwordGeneration");
-const { tokenGeneration }  = require("../service/tokenGeneration");
+const { passwordGeneration, passwordCompare } = require("../services/passwordGeneration");
+const { tokenGeneration }  = require("../services/tokenGeneration");
 
 const registration = async (req, res, next) => {
     try {
