@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const connectMongoose = async () => {
   try {
     const mangooseConnect = await mongoose.connect(process.env.MANGO_URL, {
-      dbName: "db-contacts",
+      dbName: "db-booker",
     });
     console.log("Database connection successful");
     return mangooseConnect;
