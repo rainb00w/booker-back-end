@@ -3,6 +3,7 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const authRouter = require('./routes/api/auth');
+const trainingRouter = require('./routes/api/training')
 const app = express();
 
 app.use(logger('dev'));
@@ -10,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/user', authRouter);
+app.use('/api/training', trainingRouter)
 
 app.use((req, res) => {
   const { status = 404 } = res;
