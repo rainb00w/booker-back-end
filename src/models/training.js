@@ -32,6 +32,11 @@ const trainingSchema = new Schema({
             }
         },                
     ],
+    completed: {
+        type: String,
+        required: [true, 'Set completed status'],
+        default: false
+    },
     owner: {
       type: SchemaTypes.ObjectId,
       ref: 'user',
@@ -53,7 +58,8 @@ const schemaAddTraining = Joi.object({
     
     books: Joi.array()
         .label('Books Array')
-        .required(),
+        // .required()
+    ,
 })
 
 const schemaUpdateTraining = Joi.object({

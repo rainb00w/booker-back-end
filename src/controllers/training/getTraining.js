@@ -1,14 +1,11 @@
-const { Training } = require('../models')
 const { RequestError } = require('../../helpers')
+const { trainingServices } = require('../../services')
 
 const getTraining = async (req, res) => {
     const { _id: owner } = req.user
-    try {
-        const result = await Training.find(owner)
-        res.status(200).json(result)
-    } catch (error) {
-        throw RequestError(error.status, error.message)
-    }
+    const result = await trainingServices.getTraining(owner)
+    if (!result) throw RequestError(404, 'Not found')
+    res.json(result)
 }
 
 module.exports = getTraining

@@ -1,24 +1,28 @@
-const { Training } = require('../models')
+const { trainingServices, booksServices } = require('../../services')
 const { RequestError } = require('../../helpers')
 
 const addTraining = async (req, res) => {
     const { _id: owner } = req.user
     const { body } = req
-    try {
-        const currentTraining = await Training.find(owner)
-        if (currentTraining) {
-            if (currentTraining.finishDate > Date.now) {
-                const difference = currentTraining.finishDate.getTime() - Date.now.getTime()
-                const totalDays = Math.ceil(difference / (1000 * 3600 / 24))
-                RequestError(400, `Поточне тренування не завершене. Спробуйте створити нове тренування через ${totalDays} днів.`)
-            }
-        } else {
-            const result = await Training.create({ ...body, owner })
-            res.status(201).json(result)
+    for (const book of body.books) {
+        const originalBook = await booksServices.getById({ bookId: book._id, owner })
+        if (originalBook.status === 'haveRead') {
+            throw RequestError(400, 'Chosen books have already been read.')
         }
-    } catch (error) {
-        throw RequestError(error.status, error.message)
     }
+    const currentTraining = await trainingServices.getTraining(owner)
+    if (currentTraining) {
+        const currentDate = new Date()
+        const { finishDate, _id } = currentTraining
+        if (finishDate.getTime() >= currentDate.getTime()) {
+            const difference = finishDate.getTime() - currentDate.getTime()
+            const totalDays = Math.ceil(difference / (1000 * 3600 * 24))
+            throw RequestError(403, `Training is in progress. Try again in ${totalDays} days.`)
+        } else {
+            await trainingServices.deleteTraining(_id)
+        }
+    } 
+    res.status(201).json(await trainingServices.addTraining(owner, body))
 }
 
 module.exports = addTraining

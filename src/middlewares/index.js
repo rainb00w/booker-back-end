@@ -1,9 +1,7 @@
 const validationBody = require('./validationBody')
-const joiAuthValidation = require('./joiAuthValidation')
-const authentificate = require('./authentificate')
+const authentificate = require('./autentificate')
 
 module.exports = {
     validationBody,
-    joiAuthValidation,
     authentificate
 }
