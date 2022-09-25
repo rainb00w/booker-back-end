@@ -97,14 +97,14 @@ const googleAuth = async (req, res, next) => {
 const googleRedirect = async (req, res, next) => {
     try {
         const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
-        console.log("fullURL", fullUrl)
+        // console.log("fullURL", fullUrl)
         const urlObj = new URL(fullUrl);
-        console.log("urlOBJ", urlObj)
+        // console.log("urlOBJ", urlObj)
 
         const urlParams = queryString.parse(urlObj.search);
-        console.log("urlPARAMS", urlParams)
+        // console.log("urlPARAMS", urlParams)
         const code = urlParams.code;
-        console.log("code", code)
+        // console.log("code", code)
 
         const tokenData = await axios({
             url: `https://oauth2.googleapis.com/token`,
@@ -125,6 +125,10 @@ const googleRedirect = async (req, res, next) => {
                 Authorization: `Bearer ${tokenData.data.access_token}`,
             },
         });
+
+        const { email, name } = userData.data;
+        console.log(userData.data)
+        console.log(email, name)
 
         return res.redirect(
             `${process.env.FRONTEND_URL}?email=${userData.data.email}`
