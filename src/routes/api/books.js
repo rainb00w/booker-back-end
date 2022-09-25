@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { booksValidation } = require('../../middlewares/booksValidation');
+const { booksValidation } = require('../../middlewares/joiBooksValidation');
 
 const authentificate = require('../../middlewares/autentificate');
 
