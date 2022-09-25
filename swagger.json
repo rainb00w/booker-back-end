@@ -51,12 +51,13 @@
             "content": {}
           },
           "409": {
-            "description": "Provided email already exists",
+            "description": "User with this email is already registered",
             "content": {}
           }
         }
       }
     },
+
     "/api/users/login": {
       "post": {
         "tags": ["Auth"],
@@ -64,7 +65,7 @@
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Registration's object",
+          "description": "Login's object",
           "required": true,
           "content": {
             "application/json": {
@@ -75,7 +76,7 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Successful operation",
             "content": {
               "application/json": {
@@ -86,11 +87,12 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)",
+            "description": "missing required name field or the field did not pass validation",
             "content": {}
           },
-          "409": {
-            "description": "Provided email already exists",
+
+          "401": {
+            "description": "Email or password is wrong",
             "content": {}
           }
         }
@@ -102,34 +104,13 @@
         "summary": "User logout",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LogoutRequest"
-              }
-            }
-          }
-        },
         "responses": {
-          "201": {
+          "204": {
             "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LogoutResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request (invalid request body)",
             "content": {}
           },
-          "409": {
-            "description": "Provided email already exists",
+          "401": {
+            "description": "Not authorized",
             "content": {}
           }
         }
@@ -140,8 +121,13 @@
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": ["name", "email", "password", "repeatPassword"],
         "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Mango"
+          },
           "email": {
             "type": "string",
             "description": "User's email",
@@ -151,30 +137,47 @@
             "type": "string",
             "description": "User's password",
             "example": "qwerty123"
+          },
+          "repeatPassword": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
           }
         }
       },
       "RegistrationResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "description": "User's email",
-              "format": "email"
-            },
-            "userId": {
-              "type": "number",
-              "description": "User's id",
-              "example": "32143232436545474"
-            }
+        "type": "object",
+
+        "properties": {
+          "_id": {
+            "type": "objectId",
+            "description": "User's id",
+            "example": "6313700a788308a1f5ee225"
+          },
+
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Mango"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's hashpassword",
+            "example": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm"
           }
         },
-        "example": [
-          { "email": "1@gmail.com", "userId": "1" },
-          { "email": "2@gmail.com", "userId": "2" }
-        ]
+
+        "example": {
+          "_id": "objectId('6313700a788308a1f5ee225')",
+          "name": "Mango",
+          "email": "user@example.com",
+          "password": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm"
+        }
       },
       "LoginRequest": {
         "type": "object",
@@ -193,65 +196,17 @@
         }
       },
       "LoginResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "description": "User's email",
-              "format": "email"
-            },
-            "userId": {
-              "type": "number",
-              "description": "User's id",
-              "example": "32143232436545474"
-            }
-          }
-        },
-        "example": [
-          { "email": "1@gmail.com", "userId": "1" },
-          { "email": "2@gmail.com", "userId": "2" }
-        ]
-      },
-
-      "LogoutRequest": {
         "type": "object",
-        "required": ["email", "password"],
+
         "properties": {
-          "email": {
+          "token": {
             "type": "string",
-            "description": "User's email",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "description": "User's password",
-            "example": "qwerty123"
-          }
-        }
-      },
-      "LogoutResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "description": "User's email",
-              "format": "email"
-            },
-            "userId": {
-              "type": "number",
-              "description": "User's id",
-              "example": "32143232436545474"
-            }
+            "description": "User's token",
+            "example": "7c65b154-f218-4417-a0a8-b2609d9c0de4"
           }
         },
-        "example": [
-          { "email": "1@gmail.com", "userId": "1" },
-          { "email": "2@gmail.com", "userId": "2" }
-        ]
+
+        "example": { "token": "7c65b154-f218-4417-a0a8-b2609d9c0de4" }
       }
     },
     "securitySchemes": {
