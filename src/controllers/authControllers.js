@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const { passwordGeneration, passwordCompare } = require("../services/passwordGeneration");
 const { tokenGeneration } = require("../services/tokenGeneration");
 
+
 const registration = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
@@ -14,7 +15,7 @@ const registration = async (req, res, next) => {
             throw error;
         }
 
-        // hash password
+        // ? hash password
         const hashPassword = await passwordGeneration(password);
 
         const data = await User.create({ name, email, password: hashPassword });
@@ -30,6 +31,7 @@ const registration = async (req, res, next) => {
         next(err);
     }
 };
+
 
 const login = async (req, res, next) => {
     try {
@@ -52,8 +54,6 @@ const login = async (req, res, next) => {
         await User.findByIdAndUpdate(user._id, { token });
 
         res.status(200).json({token})
-
-
     }
     catch (err) {
         if (err.message.includes("validation failed")) err.status = 400;
@@ -61,7 +61,27 @@ const login = async (req, res, next) => {
     }
 };
 
+
+const logout = async (req, res, next) => { 
+    try {
+        const { _id } = req.user;
+        await User.findByIdAndUpdate(_id, { token: null });
+        res.status(204).send();
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+
+const current = async (req, res, next) => { 
+    const { name, email } = req.user;
+    res.status(200).json({ name, email });
+};
+
 module.exports = {
     registration,
-    login
+    login,
+    logout,
+    current
 };
