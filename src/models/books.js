@@ -15,7 +15,7 @@ const booksSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'toRaed',
+    default: 'toRead',
   },
   rating: {
     type: Number,
