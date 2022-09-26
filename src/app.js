@@ -21,8 +21,7 @@ app.use('/api/training', trainingRouter)
 app.use('/api/books', booksRouter);
 
 app.use((req, res) => {
-  const { status = 404 } = res;
-  res.status(status).json({ message: 'Not found', status });
+  res.status(404).json({ message: 'Not found' });
 });
 
 app.use((err, req, res, next) => {
