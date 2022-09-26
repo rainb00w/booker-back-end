@@ -12,8 +12,12 @@ const addTraining = async (req, res) => {
     }
     const currentTraining = await trainingServices.getTraining(owner)
     if (currentTraining) {
-        const currentDate = new Date()
         const { finishDate, _id } = currentTraining
+        if (currentTraining.completed) {
+            await trainingServices.deleteTraining(_id)
+            res.status(201).json(await trainingServices.addTraining(owner, body))
+        }
+        const currentDate = new Date()
         if (finishDate.getTime() >= currentDate.getTime()) {
             const difference = finishDate.getTime() - currentDate.getTime()
             const totalDays = Math.ceil(difference / (1000 * 3600 * 24))

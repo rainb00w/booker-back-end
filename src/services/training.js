@@ -13,7 +13,7 @@ const getTraining = async (owner) => {
 }
 
 const updateTraining = async (id, body) => {
-    return await Training.findByIdAndUpdate(id, body, { new: true })
+    return await Training.findByIdAndUpdate(id, body, { new: true }).populate('books', ['pages', 'status'])
 }
 
 module.exports = {

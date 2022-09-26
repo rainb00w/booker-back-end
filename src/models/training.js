@@ -23,7 +23,6 @@ const trainingSchema = new Schema({
             date: {
                 type: Date,
                 required: [true, 'Set date for added read pages'],
-                default: Date.now,
                 unique: true,
             },
             pages: {
@@ -33,7 +32,7 @@ const trainingSchema = new Schema({
         },                
     ],
     completed: {
-        type: String,
+        type: Boolean,
         required: [true, 'Set completed status'],
         default: false
     },
@@ -50,16 +49,17 @@ const Training = model('Training', trainingSchema)
 const schemaAddTraining = Joi.object({
     startDate: Joi.date()
         .label('Training Start Date')
+        .min('now')
         .required(),
 
     finishDate: Joi.date()
         .label('Training Finish Date')
+        .min(Joi.ref('startDate'))
         .required(),
     
     books: Joi.array()
         .label('Books Array')
-        // .required()
-    ,
+        .required(),
 })
 
 const schemaUpdateTraining = Joi.object({
@@ -69,6 +69,8 @@ const schemaUpdateTraining = Joi.object({
 
     pages: Joi.number()
         .label('Number of pages read')
+        .integer()
+        .positive()
         .required(),
 })
 
