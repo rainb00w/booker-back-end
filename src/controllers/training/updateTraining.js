@@ -24,7 +24,7 @@ const updateTraining = async (req, res) => {
                     await booksServices.updateBookStatus(originalBook._id, owner, { status: 'haveRead' })
                 }
             }
-            res.json(await trainingServices.updateTraining(_id, { $push: { results: { ...body } } , completed: true }))
+            res.json(await trainingServices.updateTraining(_id, { $push: { results: { ...body } }, completed: true }))
         } else {
             let pagesReadCount = totalPagesReadCount - totalReadBooksPagesCount + Number(body.pages)
             for (let i = 0; i < books.length; i += 1) {
@@ -32,13 +32,9 @@ const updateTraining = async (req, res) => {
                 if (pagesReadCount > books[i].pages) {
                     await booksServices.updateBookStatus(books[i]._id, owner, { status: 'haveRead' })
                     pagesReadCount -= books[i].pages
-                } else {
-                    await booksServices.updateBookStatus(books[i]._id, owner, { status: 'reading' })
-                    break
                 }
-
+                res.json(await trainingServices.updateTraining(_id, { $push: { results: { ...body } } }))
             }
-            res.json(await trainingServices.updateTraining(_id, { $push: { results: { ...body } } }))
         }
     } else throw RequestError(404, 'Not found')
 }
