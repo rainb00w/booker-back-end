@@ -33,7 +33,7 @@ const updateTraining = async (req, res) => {
                     await booksServices.updateBookStatus(books[i]._id, owner, { status: 'haveRead' })
                     pagesReadCount -= books[i].pages
                 }
-                res.json(await trainingServices.updateTraining(_id, { $push: { results: { ...body } } }))
+                res.json(await trainingServices.addResults(_id, body))
             }
         }
     } else throw RequestError(404, 'Not found')
