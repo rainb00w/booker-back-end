@@ -6,7 +6,7 @@ const addTraining = async (req, res) => {
     const { body } = req
     for (const book of body.books) {
         const originalBook = await booksServices.getById({ bookId: book._id, owner })
-        if (originalBook.status === 'haveRead') {
+        if (originalBook.status === 'haveRead' || originalBook.status === 'reading') {
             throw RequestError(400, 'Chosen books have already been read.')
         }
     }
@@ -14,8 +14,12 @@ const addTraining = async (req, res) => {
     if (currentTraining) {
         const { finishDate, _id } = currentTraining
         if (currentTraining.completed) {
+            body.books.forEach(async book => {
+                await booksServices.updateBookStatus(book._id, owner, { status: 'reading' })
+            })
             await trainingServices.deleteTraining(_id)
-            res.status(201).json(await trainingServices.addTraining(owner, body))
+            await trainingServices.addTraining(owner, body)
+            res.status(201).json(await trainingServices.getTraining(owner))
         }
         const currentDate = new Date()
         if (finishDate.getTime() >= currentDate.getTime()) {
@@ -26,7 +30,11 @@ const addTraining = async (req, res) => {
             await trainingServices.deleteTraining(_id)
         }
     } 
-    res.status(201).json(await trainingServices.addTraining(owner, body))
+    body.books.forEach(async book => {
+        await booksServices.updateBookStatus(book._id, owner, { status: 'reading' })
+    })
+    await trainingServices.addTraining(owner, body)
+    res.status(201).json(await trainingServices.getTraining(owner))
 }
 
 module.exports = addTraining
