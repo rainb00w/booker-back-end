@@ -23,7 +23,6 @@ const trainingSchema = new Schema({
             date: {
                 type: Date,
                 required: [true, 'Set date for added read pages'],
-                unique: true,
             },
             pages: {
                 type: Number,
