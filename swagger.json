@@ -11,15 +11,23 @@
   },
   "consumes": ["application/json"],
   "produces": ["application/json"],
-  "servers": [{ "url": "http://localhost:3000" }],
+  "servers": [{ "url": "https://booker-back-end.herokuapp.com" }],
   "tags": [
     {
       "name": "Auth",
       "description": "Authorization endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User endpoints"
+    },
+    {
+      "name": "Books",
+      "description": "Books endpoints"
     }
   ],
   "paths": {
-    "/api/users/register": {
+    "/api/user/registration": {
       "post": {
         "tags": ["Auth"],
         "summary": "User registration",
@@ -47,7 +55,7 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)",
+            "description": "missing required name field or the field did not pass validation",
             "content": {}
           },
           "409": {
@@ -58,7 +66,7 @@
       }
     },
 
-    "/api/users/login": {
+    "/api/user/login": {
       "post": {
         "tags": ["Auth"],
         "summary": "User login",
@@ -98,8 +106,9 @@
         }
       }
     },
-    "/api/users/logout": {
-      "post": {
+
+    "/api/user/logout": {
+      "get": {
         "tags": ["Auth"],
         "summary": "User logout",
         "parameters": [],
@@ -115,13 +124,234 @@
           }
         }
       }
+    },
+
+    "/api/user/current": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Current User info",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/books": {
+      "post": {
+        "tags": ["Books"],
+        "summary": "Add book",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Books's post object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBookRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostBookResponse"
+                }
+              }
+            }
+          },
+
+          "400": {
+            "description": "missing required fields or the field did not pass validation",
+            "content": {}
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      },
+
+      "get": {
+        "tags": ["Books"],
+        "summary": "Get books",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBooksResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/books/{bookId}": {
+      "get": {
+        "tags": ["Books"],
+        "summary": "Add book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "string",
+            "description": "id of the book",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBookByIdResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/books/status/{bookId}": {
+      "put": {
+        "tags": ["Books"],
+        "summary": "update status of the book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "string",
+            "description": "id of the book",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "new status of the book",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutStatusRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutStatusResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/books/resume/{bookId}": {
+      "put": {
+        "tags": ["Books"],
+        "summary": "update resume of the book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "string",
+            "description": "id of the book",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "new resume of the book",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutResumeRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutResumeResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
     }
   },
+
   "components": {
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
-        "required": ["name", "email", "password", "repeatPassword"],
+        "required": ["name", "email", "password"],
         "properties": {
           "name": {
             "type": "string",
@@ -134,51 +364,63 @@
             "format": "email"
           },
           "password": {
-            "type": "string",
-            "description": "User's password",
-            "example": "qwerty123"
-          },
-          "repeatPassword": {
             "type": "string",
             "description": "User's password",
             "example": "qwerty123"
           }
         }
       },
+
       "RegistrationResponse": {
         "type": "object",
-
         "properties": {
-          "_id": {
-            "type": "objectId",
-            "description": "User's id",
-            "example": "6313700a788308a1f5ee225"
-          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Mango"
+              },
 
-          "name": {
-            "type": "string",
-            "description": "User's name",
-            "example": "Mango"
-          },
-          "email": {
-            "type": "string",
-            "description": "User's email",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "description": "User's hashpassword",
-            "example": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm"
+              "password": {
+                "type": "string",
+                "description": "User's hashpassword",
+                "example": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm"
+              },
+
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+
+              "token": {
+                "type": null,
+                "description": "User's token",
+                "example": null
+              },
+
+              "_id": {
+                "type": "objectId",
+                "description": "User's id",
+                "example": "6313700a788308a1f5ee225"
+              }
+            }
           }
         },
 
         "example": {
-          "_id": "objectId('6313700a788308a1f5ee225')",
-          "name": "Mango",
-          "email": "user@example.com",
-          "password": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm"
+          "data": {
+            "name": "Mango",
+            "password": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm",
+            "email": "user@example.com",
+            "token": null,
+            "_id": "objectId('6313700a788308a1f5ee225')"
+          }
         }
       },
+
       "LoginRequest": {
         "type": "object",
         "required": ["email", "password"],
@@ -207,6 +449,286 @@
         },
 
         "example": { "token": "7c65b154-f218-4417-a0a8-b2609d9c0de4" }
+      },
+
+      "CurrentResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Mango"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          }
+        },
+
+        "example": {
+          "name": "Mango",
+          "email": "user@example.com"
+        }
+      },
+
+      "PostBookRequest": {
+        "type": "object",
+        "required": ["title", "author", "year", "pages"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Book's title",
+            "example": "The Art of War"
+          },
+          "author": {
+            "type": "string",
+            "description": "Book's author",
+            "example": "Sun Tzu"
+          },
+          "year": {
+            "type": "integer",
+            "description": "year of publication",
+            "example": 1974
+          },
+          "pages": {
+            "type": "integer",
+            "description": "pages in book",
+            "example": 100
+          }
+        }
+      },
+
+      "PostBookResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          }
+        },
+
+        "example": {
+          "status": "Succses"
+        }
+      },
+
+      "GetBooksResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          },
+          "code": {
+            "type": "integer",
+            "description": "code",
+            "example": 200
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "books": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Book's title",
+                      "example": "The Art of War"
+                    },
+                    "author": {
+                      "type": "string",
+                      "description": "Book's author",
+                      "example": "Sun Tzu"
+                    },
+                    "year": {
+                      "type": "integer",
+                      "description": "year of publication",
+                      "example": 1974
+                    },
+                    "pages": {
+                      "type": "integer",
+                      "description": "pages in book",
+                      "example": 100
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "curreny status of the book",
+                      "example": "toRead"
+                    },
+                    "owner": {
+                      "type": "string",
+                      "description": "owner's (user's) id",
+                      "example": "6331e0bd7d50cafaf02cf8c8"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "example": {
+          "status": "Succses",
+          "code": 200,
+          "payload": {
+            "books": [
+              {
+                "_id": "6331fa40c8e0d7f99f18745a",
+                "title": "The Art of War",
+                "author": "Sun Tzu",
+                "year": 1974,
+                "page": 100,
+                "status": "toRead",
+                "owner": "6331e0bd7d50cafaf02cf8c8"
+              },
+              {
+                "_id": "6331fa40c8e0d7f99f187435",
+                "title": "1984",
+                "author": "George Orwell",
+                "year": 1949,
+                "page": 100,
+                "status": "toRead",
+                "owner": "6331e0bd7d50cafaf02cf8c8"
+              }
+            ]
+          }
+        }
+      },
+
+      "GetBookByIdResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          },
+          "code": {
+            "type": "integer",
+            "description": "code",
+            "example": 200
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "book": {
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Book's title",
+                    "example": "The Art of War"
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Book's author",
+                    "example": "Sun Tzu"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "description": "year of publication",
+                    "example": 1974
+                  },
+                  "pages": {
+                    "type": "integer",
+                    "description": "pages in book",
+                    "example": 100
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "curreny status of the book",
+                    "example": "toRead"
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "owner's (user's) id",
+                    "example": "6331e0bd7d50cafaf02cf8c8"
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "example": {
+          "status": "Succses",
+          "code": 200,
+          "payload": {
+            "book": {
+              "_id": "6331fa40c8e0d7f99f18745a",
+              "title": "The Art of War",
+              "author": "Sun Tzu",
+              "year": 1974,
+              "page": 100,
+              "status": "toRead",
+              "owner": "6331e0bd7d50cafaf02cf8c8"
+            }
+          }
+        }
+      },
+
+      "PutStatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          }
+        },
+
+        "example": {
+          "status": "Succses"
+        }
+      },
+
+      "PutStatusRequest": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "new status of the book",
+            "example": "reading"
+          }
+        }
+      },
+
+      "PutResumeResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          }
+        },
+
+        "example": {
+          "status": "Succses"
+        }
+      },
+
+      "PutResumeRequest": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "resume": {
+            "type": "string",
+            "description": "new resume of the book",
+            "example": "exciting book, that blow my mind"
+          },
+
+          "rating": {
+            "type": "integer",
+            "description": "new rating of the book",
+            "example": 4
+          }
+        }
       }
     },
     "securitySchemes": {
