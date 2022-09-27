@@ -58,6 +58,8 @@ const schemaAddTraining = Joi.object({
     
     books: Joi.array()
         .label('Books Array')
+        .min(1)
+        .items(Joi.object({ _id: Joi.string().required() }))
         .required(),
 })
 
