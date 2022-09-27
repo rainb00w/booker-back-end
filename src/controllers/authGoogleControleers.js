@@ -1,7 +1,9 @@
+const User = require('../models/user');
+const { tokenGeneration } = require("../services/tokenGeneration");
+
 const axios = require('axios');
 const queryString = require('query-string'); 
 require('dotenv').config();
-
 
 const googleAuth = async (req, res, next) => {
     try {
@@ -59,12 +61,20 @@ const googleRedirect = async (req, res, next) => {
             },
         });
 
+        // ? create profile and take token
         const { email, name } = userData.data;
-        console.log(userData.data)
-        console.log(email, name)
+        let profile = await User.findOne({ email });
+
+        if (!profile) {
+            await User.create({ name, email });
+            profile = await User.findOne({ email });
+        }
+        const payload = { id: profile._id };
+        const token = tokenGeneration(payload);
+        await User.findByIdAndUpdate(profile._id, { token });
 
         return res.redirect(
-            `${process.env.FRONTEND_URL}?email=${userData.data.email}`
+            `${process.env.FRONTEND_URL}?token=${token}`
         )
     }
     catch (err) {
