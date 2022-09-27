@@ -64,6 +64,7 @@ const schemaAddTraining = Joi.object({
 const schemaUpdateTraining = Joi.object({
     date: Joi.date()
         .label('Reading date')
+        .max('now')
         .required(),
 
     pages: Joi.number()
