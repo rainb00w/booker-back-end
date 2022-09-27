@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const { booksValidation } = require('../../middlewares/joiBooksValidation');
+const {
+  addBookValidation,
+  updateStatesValidation,
+  updateResumeValidation,
+} = require('../../middlewares/joiBooksValidation');
 
 const authentificate = require('../../middlewares/autentificate');
 
@@ -19,10 +23,18 @@ router.get('/', listBooksController);
 
 router.get('/:bookId', getByIdController);
 
-router.post('/', booksValidation, addBookController);
+router.post('/', addBookValidation, addBookController);
 
-router.put('/status/:bookId', booksValidation, updateBookStatusController);
+router.put(
+  '/status/:bookId',
+  updateStatesValidation,
+  updateBookStatusController
+);
 
-router.put('/resume/:bookId', booksValidation, updateBookResumeController);
+router.put(
+  '/resume/:bookId',
+  updateResumeValidation,
+  updateBookResumeController
+);
 
 module.exports = router;
