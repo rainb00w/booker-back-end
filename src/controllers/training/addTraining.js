@@ -10,6 +10,9 @@ const addTraining = async (req, res) => {
             throw RequestError(400, 'Chosen books have already been read.')
         }
     }
+    if (new Date(body.finishDate).getTime() - new Date(body.startDate).getTime() > (32 * 24 * 3600 * 1000) || new Date(body.finishDate).getTime() - new Date(body.startDate).getTime() < (24 * 3600 * 1000)) {
+        throw RequestError(400, 'Training period should be greater than 1 day and must not exceed 31 days.')
+    }
     const currentTraining = await trainingServices.getTraining(owner)
     if (currentTraining) {
         const { finishDate, _id } = currentTraining
@@ -29,7 +32,7 @@ const addTraining = async (req, res) => {
         } else {
             await trainingServices.deleteTraining(_id)
         }
-    } 
+    }
     body.books.forEach(async book => {
         await booksServices.updateBookStatus(book._id, owner, { status: 'reading' })
     })

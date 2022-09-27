@@ -17,7 +17,7 @@ const updateTraining = async (id, body) => {
 }
 
 const addResults = async (id, body) => {
-    return await Training.findOneAndUpdate({ _id: id}, { $push: { results: [{ ...body }] } }, { upsert: true, new: true }).populate('books', ['pages', 'status'])
+    return await Training.findOneAndUpdate({ _id: id}, { $push: { results: { ...body } } }, { upsert: true, new: true }).populate('books', ['pages', 'status'])
 }
 
 module.exports = {
