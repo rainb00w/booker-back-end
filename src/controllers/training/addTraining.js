@@ -4,20 +4,24 @@ const { RequestError } = require('../../helpers')
 const addTraining = async (req, res) => {
     const { _id: owner } = req.user
     const { body } = req
-    body.books.forEach(async (book) => {
+    for (const book of body.books) {
         const originalBook = await booksServices.getById({ bookId: book._id, owner })
-        if (originalBook.status === 'haveRead' || originalBook.status === 'reading') {
-            throw RequestError(400, 'Chosen books have already been read.')
+        if (!originalBook) {
+            throw RequestError(400, 'No books found by ids.')
+        } else {
+            if (originalBook.status === 'haveRead' || originalBook.status === 'reading') {
+                throw RequestError(400, 'Chosen books have already been read.')
+            }
         }
-    })
+    }
     if (new Date(body.finishDate).getTime() - new Date(body.startDate).getTime() > (32 * 24 * 3600 * 1000) || new Date(body.finishDate).getTime() - new Date(body.startDate).getTime() < (24 * 3600 * 1000)) {
         throw RequestError(400, 'Training period should be greater than 1 day and must not exceed 31 days.')
     }
     const startTraining = async () => {
         body.books.forEach(async book => {
-                await booksServices.updateBookStatus(book._id, owner, { status: 'reading' })
-            })
-            await trainingServices.addTraining(owner, body)
+            await booksServices.updateBookStatus(book._id, owner, { status: 'reading' })
+        })
+        await trainingServices.addTraining(owner, body)
         res.status(201).json(await trainingServices.getTraining(owner))
     }
     const currentTraining = await trainingServices.getTraining(owner)
