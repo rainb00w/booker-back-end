@@ -48,11 +48,13 @@ const Training = model('Training', trainingSchema)
 const schemaAddTraining = Joi.object({
     startDate: Joi.date()
         .label('Training Start Date')
+        .iso()
         .min('now')
         .required(),
 
     finishDate: Joi.date()
         .label('Training Finish Date')
+        .iso()
         .min(Joi.ref('startDate'))
         .required(),
     
@@ -66,6 +68,7 @@ const schemaAddTraining = Joi.object({
 const schemaUpdateTraining = Joi.object({
     date: Joi.date()
         .label('Reading date')
+        .iso()
         .max('now')
         .required(),
 
@@ -73,6 +76,8 @@ const schemaUpdateTraining = Joi.object({
         .label('Number of pages read')
         .integer()
         .positive()
+        .min(1)
+        .max(999)
         .required(),
 })
 
