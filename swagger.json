@@ -24,6 +24,10 @@
     {
       "name": "Books",
       "description": "Books endpoints"
+    },
+    {
+      "name": "Training",
+      "description": "Training endpoints"
     }
   ],
   "paths": {
@@ -71,7 +75,6 @@
         "tags": ["Auth"],
         "summary": "User login",
         "parameters": [],
-        "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Login's object",
           "required": true,
@@ -228,6 +231,7 @@
             "in": "path",
             "name": "bookId",
             "type": "string",
+            "example": "633430de05d976545f184b08",
             "description": "id of the book",
             "required": true
           }
@@ -263,6 +267,7 @@
             "in": "path",
             "name": "bookId",
             "type": "string",
+            "example": "633430de05d976545f184b08",
             "description": "id of the book",
             "required": true
           }
@@ -308,6 +313,7 @@
           {
             "in": "path",
             "name": "bookId",
+            "example": "633430de05d976545f184b08",
             "type": "string",
             "description": "id of the book",
             "required": true
@@ -340,6 +346,120 @@
 
           "401": {
             "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/training": {
+      "post": {
+        "tags": ["Training"],
+        "summary": "Add user training",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Training's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostTrainingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Chosen books have already been read or training period should be greater than 1 day and must not exceed 31 days",
+            "content": {}
+          },
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Training is in progress",
+            "content": {}
+          }
+        }
+      },
+
+      "get": {
+        "tags": ["Training"],
+        "summary": "User training",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingResponse"
+                }
+              }
+            }
+          },
+
+          "404": {
+            "description": "Not found",
+            "content": {}
+          },
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      },
+
+      "patch": {
+        "tags": ["Training"],
+        "summary": "Update user stats",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Stats's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchTrainingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTrainingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Chosen books have already been read or training period should be greater than 1 day and must not exceed 31 days",
+            "content": {}
+          },
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Training is in progress",
             "content": {}
           }
         }
@@ -402,7 +522,7 @@
               },
 
               "_id": {
-                "type": "objectId",
+                "type": "string",
                 "description": "User's id",
                 "example": "6313700a788308a1f5ee225"
               }
@@ -416,7 +536,7 @@
             "password": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm",
             "email": "user@example.com",
             "token": null,
-            "_id": "objectId('6313700a788308a1f5ee225')"
+            "_id": "6313700a788308a1f5ee225"
           }
         }
       },
@@ -578,7 +698,7 @@
           "payload": {
             "books": [
               {
-                "_id": "6331fa40c8e0d7f99f18745a",
+                "_id": "633430de05d976545f184b08",
                 "title": "The Art of War",
                 "author": "Sun Tzu",
                 "year": 1974,
@@ -618,6 +738,11 @@
             "properties": {
               "book": {
                 "properties": {
+                  "_id": {
+                    "type": "string",
+                    "description": "id of the book",
+                    "example": "633430de05d976545f184b08"
+                  },
                   "title": {
                     "type": "string",
                     "description": "Book's title",
@@ -659,7 +784,7 @@
           "code": 200,
           "payload": {
             "book": {
-              "_id": "6331fa40c8e0d7f99f18745a",
+              "_id": "633430de05d976545f184b08",
               "title": "The Art of War",
               "author": "Sun Tzu",
               "year": 1974,
@@ -728,6 +853,224 @@
             "description": "new rating of the book",
             "example": 4
           }
+        }
+      },
+
+      "PostTrainingRequest": {
+        "type": "object",
+        "required": ["startDate", "finishDate", "books"],
+        "properties": {
+          "startDate": {
+            "type": "date-time",
+            "description": "when the training start's",
+            "example": "2022-10-21T17:32:28Z"
+          },
+          "finishDate": {
+            "type": "date-time",
+            "description": "when the training end's",
+            "example": "2022-10-27T17:32:28Z"
+          },
+          "books": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "description": "id of the book",
+                  "example": "633430de05d976545f184b08"
+                }
+              }
+            }
+          }
+        }
+      },
+
+      "TrainingResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "id of the training",
+            "example": "63333edbe0608187191dc8f4"
+          },
+          "startDate": {
+            "type": "date-time",
+            "description": "when the training start's",
+            "example": "2022-10-21T17:32:28Z"
+          },
+          "finishDate": {
+            "type": "date-time",
+            "description": "when the training end's",
+            "example": "2022-10-27T17:32:28Z"
+          },
+          "books": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "description": "id of the book",
+                  "example": "633430de05d976545f184b08"
+                },
+                "pages": {
+                  "type": "intager",
+                  "description": "number of pages",
+                  "example": 100
+                },
+                "status": {
+                  "type": "string",
+                  "description": "status of the book",
+                  "example": "reading"
+                }
+              }
+            }
+          },
+
+          "completed": {
+            "type": "boolean",
+            "description": "if the book is completed",
+            "example": false
+          },
+          "owner": {
+            "type": "string",
+            "description": "id of the user",
+            "example": "6331e0bd7d50cafaf02cf8c8"
+          },
+          "results": {
+            "type": "array",
+            "description": "array of results",
+            "example": []
+          }
+        },
+
+        "example": {
+          "_id": "63333edbe0608187191dc8f4",
+          "startDate": "2022-09-28T17:32:28.000Z",
+          "finishDate": "2022-09-30T17:32:28.000Z",
+          "books": [
+            {
+              "_id": "633430de05d976545f184b08",
+              "pages": 100,
+              "status": "reading"
+            }
+          ],
+          "completed": false,
+          "owner": "6331e0bd7d50cafaf02cf8c8",
+          "results": []
+        }
+      },
+
+      "PatchTrainingRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "date-time",
+            "description": "when the pages was read",
+            "example": "2022-10-21T17:32:28Z"
+          },
+          "pages": {
+            "type": "integer",
+            "description": "number of pages",
+            "example": 20
+          }
+        }
+      },
+
+      "PatchTrainingResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "id of the training",
+            "example": "63333edbe0608187191dc8f4"
+          },
+          "startDate": {
+            "type": "date-time",
+            "description": "when the training start's",
+            "example": "2022-10-21T17:32:28Z"
+          },
+          "finishDate": {
+            "type": "date-time",
+            "description": "when the training end's",
+            "example": "2022-10-27T17:32:28Z"
+          },
+
+          "books": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "ObjectId",
+                  "description": "id of the book",
+                  "example": "ObjectId(633070c1ba4415bbf6e640a0)"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "status of the book",
+                  "example": "reading"
+                }
+              }
+            }
+          },
+
+          "completed": {
+            "type": "boolean",
+            "description": "if the book is completed",
+            "example": false
+          },
+          "owner": {
+            "type": "string",
+            "description": "id of the user",
+            "example": "6331e0bd7d50cafaf02cf8c8"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "description": "id of the stats",
+                  "example": "633070c1ba4415bbf6e640a0"
+                },
+                "date": {
+                  "type": "date-time",
+                  "description": "when the pages was read",
+                  "example": "2022-10-21T17:32:28Z"
+                },
+                "pages": {
+                  "type": "integer",
+                  "description": "number of pages",
+                  "example": 20
+                }
+              }
+            }
+          }
+        },
+
+        "example": {
+          "_id": "63333edbe0608187191dc8f4",
+          "startDate": "2022-09-26T10:32:28.000Z",
+          "finishDate": "2022-09-30T17:32:28.000Z",
+          "books": [
+            {
+              "_id": "6331fa40c8e0d7f99f18745a",
+              "pages": 100,
+              "status": "reading"
+            }
+          ],
+          "completed": false,
+          "owner": "6331e0bd7d50cafaf02cf8c8",
+          "results": [
+            {
+              "date": "2022-09-27T11:32:28.000Z",
+              "pages": 20,
+              "_id": "633429f4b05410a6b33fcc1d"
+            }
+          ]
         }
       }
     },
