@@ -8,9 +8,16 @@ const { tokenGeneration } = require("../services/tokenGeneration");
 const registration = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
-        const user = await User.findOne({ email });
+        const userName =  await User.findOne({ name });
+        const userEmail = await User.findOne({ email });
 
-        if (user) {
+
+        if (userName) {
+            const error = createError(409, "User with this name is already registered");
+            throw error;
+        }
+
+        if (userEmail) {
             const error = createError(409, "User with this email is already registered");
             throw error;
         }
