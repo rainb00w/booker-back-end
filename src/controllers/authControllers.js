@@ -12,13 +12,28 @@ const registration = async (req, res, next) => {
         const userEmail = await User.findOne({ email });
 
 
+        // if (userName) {
+        //     const error = createError(409, "User with this name is already registered");
+        //     throw error;
+        // }
+        // 
+        // if (userEmail) {
+        //     const error = createError(409, "User with this email is already registered");
+        //     throw error;
+        // }
+        
+        if (userName && userEmail) {
+            const error = createError(409, "name&email");
+            throw error;
+        }
+
         if (userName) {
-            const error = createError(409, "User with this name is already registered");
+            const error = createError(409, "name");
             throw error;
         }
 
         if (userEmail) {
-            const error = createError(409, "User with this email is already registered");
+            const error = createError(409, "email");
             throw error;
         }
 
