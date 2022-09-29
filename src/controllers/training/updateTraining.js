@@ -7,7 +7,6 @@ const updateTraining = async (req, res) => {
     const currentTraining = await trainingServices.getTraining(owner)
     if (currentTraining) {
         const { _id, results, books, completed, startDate, finishDate } = currentTraining
-        if (completed) { throw RequestError(403, 'Training is completed!') }
         if (new Date(body.date).getTime() < new Date(startDate).getTime()) throw RequestError(400, 'Date may not precede training start date')
         if (new Date(body.date).getTime() > new Date(finishDate).getTime()) throw RequestError(400, 'Date is greater than training finish date')
         const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
@@ -20,12 +19,10 @@ const updateTraining = async (req, res) => {
             }
             return previousValue
         }, 0)
-        if (totalBooksPagesCount - totalPagesReadCount < body.pages) throw RequestError(400, 'Provided pages count exceeds number of unread pages!')
+        if (totalBooksPagesCount - totalPagesReadCount < Number(body.pages)) throw RequestError(400, 'Provided pages count exceeds number of unread pages!')
         if (totalPagesReadCount + Number(body.pages) >= totalBooksPagesCount) {
             for (const book of books) {
-                console.log(book._id)
                 const originalBook = await booksServices.getById({ bookId: book._id, owner })
-                console.log(originalBook)
                 if (originalBook.status !== 'haveRead') {
                     await booksServices.updateBookStatus(originalBook._id, owner, { status: 'haveRead' })
                 }
