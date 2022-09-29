@@ -5,7 +5,7 @@ const {
   addBookValidation,
   updateStatesValidation,
   updateResumeValidation,
-} = require('../../middlewares/joiBooksValidation');
+} = require('../../middlewares/joi/joiBooksValidation');
 
 const authentificate = require('../../middlewares/autentificate');
 

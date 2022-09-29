@@ -4,16 +4,16 @@ module.exports = {
      registrationValidation: (req, res, next) => {
         const schema = joi.object({
             name: joi.string()
-                .min(2)
-                .max(30)
+                .min(3)
+                .max(100)
                 .trim(true)
                 .required(),
             email: joi.string()
-                .min(6)
-                .max(50)
+                .min(10)
+                .max(63)
                 .required(),
             password: joi.string()
-                .min(6)
+                .min(5)
                 .max(30)
                 .required(),
         });
@@ -29,11 +29,11 @@ module.exports = {
     loginValidation: (req, res, next) => {
         const schema = joi.object({
             email: joi.string()
-                .min(6)
-                .max(50)
+                .min(10)
+                .max(63)
                 .required(),
             password: joi.string()
-                .min(6)
+                .min(5)
                 .max(30)
                 .required(),
         });

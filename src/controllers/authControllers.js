@@ -4,6 +4,10 @@ const createError = require('http-errors');
 const { passwordGeneration, passwordCompare } = require("../services/passwordGeneration");
 const { tokenGeneration } = require("../services/tokenGeneration");
 
+const { v4 } = require('uuid');
+const sendMail = require('../helpers/sendMail');
+const urlVereficationToken = require('..//services/urlVereficationToken');
+
 
 const registration = async (req, res, next) => {
     try {
@@ -28,9 +32,18 @@ const registration = async (req, res, next) => {
 
         // ? hash password
         const hashPassword = await passwordGeneration(password);
+        // ? post token
+        const verificationToken = v4();
 
-        const data = await User.create({ name, email, password: hashPassword });
+        const data = await User.create({ name, email, password: hashPassword, verificationToken });
         const takeToken = await User.findOne({ email });
+
+        const mail = {
+            to: email,
+            subject: `Confirm email`,
+            html: urlVereficationToken(verificationToken)
+        };
+        await sendMail(mail);
         
         const payload = { id: takeToken._id };
         const token = tokenGeneration(payload);
@@ -57,6 +70,11 @@ const login = async (req, res, next) => {
         const compare = await passwordCompare(password, user.password);
         if (!compare) {
             const error = createError(401, "Email or password is wrong");
+            throw error;
+        }
+
+        if (!user.verify) {
+            const error = createError(401, "Email not verify");
             throw error;
         }
 
@@ -90,9 +108,59 @@ const current = async (req, res, next) => {
     res.status(200).json({ name, email });
 };
 
+
+const getVerify = async (req, res, next) => {
+    try {
+        const { verificationToken } = req.params;
+        const user = await User.findOne({ verificationToken });
+        console.log("GetVerify", user.name)
+
+        if (!user) {
+            const error = createError(404, "User not found");
+            throw error;
+        }
+
+        console.log("GetVerifyID", user._id)
+
+        await User.findOneAndUpdate(user._id, { verify: true, verificationToken: "" });
+        res.status(200).json({ message: "Verification successful!!!!!" });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+
+const repeatVerify = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        const data = await User.findOne({ email });
+        const { verify, verificationToken } = data;
+
+        if (verify) {
+            const error = createError(400, "Verification has already been passed");
+            throw error;
+        }
+
+        const mail = {
+            to: email,
+            subject: `Confirm email`,
+            html: urlVereficationToken(verificationToken)
+        };
+        await sendMail(mail);
+
+        res.status(200).json({ message: "Verification email sent" });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     registration,
     login,
     logout,
-    current
+    current,
+    getVerify,
+    repeatVerify
 };
