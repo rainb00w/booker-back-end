@@ -6,7 +6,7 @@ const updateTraining = async (req, res) => {
     const { body } = req
     const currentTraining = await trainingServices.getTraining(owner)
     if (currentTraining) {
-        const { _id, results, books, completed, startDate, finishDate } = currentTraining
+        const { _id, results, books, startDate, finishDate } = currentTraining
         if (new Date(body.date).getTime() < new Date(startDate).getTime()) throw RequestError(400, 'Date may not precede training start date')
         if (new Date(body.date).getTime() > new Date(finishDate).getTime()) throw RequestError(400, 'Date is greater than training finish date')
         const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
