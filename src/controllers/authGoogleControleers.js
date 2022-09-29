@@ -66,7 +66,7 @@ const googleRedirect = async (req, res, next) => {
         let profile = await User.findOne({ email });
 
         if (!profile) {
-            await User.create({ name, email });
+            await User.create({ name, email, verify: true, verificationToken: "" });
             profile = await User.findOne({ email });
         }
         const payload = { id: profile._id };
