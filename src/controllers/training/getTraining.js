@@ -9,7 +9,9 @@ const getTraining = async (req, res) => {
     const currentDate = new Date()
     if (finishDate.getTime() < currentDate.getTime() && !completed) {
         books.forEach(async book => {
-            await booksServices.updateBookStatus(book._id, owner, { status: 'toRead' })
+            if (book.status === 'reading') {
+                await booksServices.updateBookStatus(book._id, owner, { status: 'toRead' })
+            }
         })
         await trainingServices.deleteTraining(_id)
         throw RequestError(404, 'Not found')
