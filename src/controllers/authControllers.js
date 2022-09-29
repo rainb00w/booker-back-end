@@ -6,7 +6,7 @@ const { tokenGeneration } = require("../services/tokenGeneration");
 
 const { v4 } = require('uuid');
 const sendMail = require('../helpers/sendMail');
-const urlVereficationToken = require('..//services/urlVereficationToken');
+const urlVereficationToken = require('../services/urlVereficationToken');
 
 
 const registration = async (req, res, next) => {
@@ -113,17 +113,14 @@ const getVerify = async (req, res, next) => {
     try {
         const { verificationToken } = req.params;
         const user = await User.findOne({ verificationToken });
-        console.log("GetVerify", user.name)
 
         if (!user) {
             const error = createError(404, "User not found");
             throw error;
         }
 
-        console.log("GetVerifyID", user._id)
-
-        await User.findOneAndUpdate(user._id, { verify: true, verificationToken: "" });
-        res.status(200).json({ message: "Verification successful!!!!!" });
+        await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
+        res.status(200).json({ message: "Verification successful" });
     }
     catch (err) {
         next(err);
