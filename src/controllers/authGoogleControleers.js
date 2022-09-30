@@ -73,10 +73,8 @@ const googleRedirect = async (req, res, next) => {
         const token = tokenGeneration(payload);
         await User.findByIdAndUpdate(profile._id, { token });
 
-        console.log(token)
-
         return res.redirect(
-            `${process.env.FRONTEND_URL}/login/?token=${token}`
+            `${process.env.FRONTEND_URL}/login/?token=${token}&name=${name}`
         )
     }
     catch (err) {
