@@ -13,7 +13,9 @@ const {
     logout,
     current,
     getVerify,
-    repeatVerify
+    repeatVerify,
+    forgotPassword,
+    getNewPassword
 } = require('../../controllers/authControllers');
 const { googleAuth, googleRedirect } = require('../../controllers/authGoogleControleers');
 
@@ -28,6 +30,9 @@ router.post('/verify', repeatVerifyEmailValidation, repeatVerify);
 // ! google
 router.get('/google', googleAuth);
 router.get('/google-redirect', googleRedirect);
+// ! new password
+router.patch('/forgotPassword', forgotPassword);
+router.get('/forgotPassword/:newPasswordToken', getNewPassword);
 
 
 module.exports = router;

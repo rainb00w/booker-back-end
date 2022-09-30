@@ -7,6 +7,7 @@ const { tokenGeneration } = require("../services/tokenGeneration");
 const { v4 } = require('uuid');
 const sendMail = require('../helpers/sendMail');
 const urlVereficationToken = require('../services/urlVereficationToken');
+const urlNewPasswordToken = require('../services/urlNewPasswordToken');
 
 
 const registration = async (req, res, next) => {
@@ -36,7 +37,6 @@ const registration = async (req, res, next) => {
         const verificationToken = v4();
 
         const data = await User.create({ name, email, password: hashPassword, verificationToken });
-        const takeToken = await User.findOne({ email });
 
         const mail = {
             to: email,
@@ -44,11 +44,6 @@ const registration = async (req, res, next) => {
             html: urlVereficationToken(verificationToken)
         };
         await sendMail(mail);
-        
-        const payload = { id: takeToken._id };
-        const token = tokenGeneration(payload);
-        await User.findByIdAndUpdate(takeToken._id, { token });
-
         res.status(201).json({data})
     }
     catch (err) {
@@ -82,7 +77,7 @@ const login = async (req, res, next) => {
         const token = tokenGeneration(payload);
         await User.findByIdAndUpdate(user._id, { token });
 
-        res.status(200).json({token})
+        res.status(200).json({token, name: user.name})
     }
     catch (err) {
         if (err.message.includes("validation failed")) err.status = 400;
@@ -113,17 +108,14 @@ const getVerify = async (req, res, next) => {
     try {
         const { verificationToken } = req.params;
         const user = await User.findOne({ verificationToken });
-        console.log("GetVerify", user.name)
 
         if (!user) {
             const error = createError(404, "User not found");
             throw error;
         }
 
-        console.log("GetVerifyID", user._id)
-
         await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
-        res.status(200).json({ message: "Verification successful!!!!!" });
+        res.status(200).json({ message: "Verification successful" });
     }
     catch (err) {
         next(err);
@@ -156,11 +148,73 @@ const repeatVerify = async (req, res, next) => {
     }
 };
 
+
+const forgotPassword = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        const newPasswordToken = v4();
+    
+        if (!user) {
+            const error = createError(401, "This mail is not registered");
+            throw error;
+        }
+    
+        if (!user.verify) {
+            const error = createError(401, "Email not verify");
+            throw error;
+        }
+    
+        const newPassword = await passwordGeneration(password);
+        await User.findByIdAndUpdate(user._id, { newPassword, newPasswordToken });
+    
+        const mail = {
+            to: email,
+            subject: `Confirm change your password`,
+            html: urlNewPasswordToken(newPasswordToken)
+        };
+        await sendMail(mail);
+        res.status(201)
+            .json({
+                message: "We have sent you a link to your email to confirm your new password."
+            });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+
+const getNewPassword = async (req, res, next) => {
+    try {
+        const { newPasswordToken } = req.params;
+        const user = await User.findOne({ newPasswordToken });
+
+        if (!user) {
+            const error = createError(404, "User not found999");
+            throw error;
+        }
+
+        const password = user.newPassword
+
+        await User.findByIdAndUpdate(user._id, { password, newPassword: "", newPasswordToken: "" });
+        res.status(200).json({ message: "Congratulations. You have confirmed the new password!" });
+    }
+    catch (err) {
+        next(err)
+    }
+};
+
+
+
+
 module.exports = {
     registration,
     login,
     logout,
     current,
     getVerify,
-    repeatVerify
+    repeatVerify,
+    forgotPassword,
+    getNewPassword
 };
