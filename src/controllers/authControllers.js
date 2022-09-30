@@ -34,9 +34,7 @@ const registration = async (req, res, next) => {
         const hashPassword = await passwordGeneration(password);
         // ? post token
         const verificationToken = v4();
-
         const data = await User.create({ name, email, password: hashPassword, verificationToken });
-        const takeToken = await User.findOne({ email });
 
         const mail = {
             to: email,
@@ -44,11 +42,6 @@ const registration = async (req, res, next) => {
             html: urlVereficationToken(verificationToken)
         };
         await sendMail(mail);
-        
-        const payload = { id: takeToken._id };
-        const token = tokenGeneration(payload);
-        await User.findByIdAndUpdate(takeToken._id, { token });
-
         res.status(201).json({data})
     }
     catch (err) {
@@ -82,7 +75,7 @@ const login = async (req, res, next) => {
         const token = tokenGeneration(payload);
         await User.findByIdAndUpdate(user._id, { token });
 
-        res.status(200).json({token})
+        res.status(200).json({token, user: user.name})
     }
     catch (err) {
         if (err.message.includes("validation failed")) err.status = 400;
@@ -113,14 +106,11 @@ const getVerify = async (req, res, next) => {
     try {
         const { verificationToken } = req.params;
         const user = await User.findOne({ verificationToken });
-        console.log("GetVerify", user.name)
 
         if (!user) {
             const error = createError(404, "User not found");
             throw error;
         }
-
-        console.log("GetVerifyID", user._id)
 
         await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
         res.status(200).json({ message: "Verification successful!!!!!" });
