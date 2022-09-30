@@ -6,7 +6,7 @@ const { tokenGeneration } = require("../services/tokenGeneration");
 
 const { v4 } = require('uuid');
 const sendMail = require('../helpers/sendMail');
-const urlVereficationToken = require('../services/urlVereficationToken');
+const urlVereficationToken = require('..//services/urlVereficationToken');
 
 
 const registration = async (req, res, next) => {
@@ -122,7 +122,7 @@ const getVerify = async (req, res, next) => {
 
         console.log("GetVerifyID", user._id)
 
-        await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
+        await User.findOneAndUpdate(user._id, { verify: true, verificationToken: "" });
         res.status(200).json({ message: "Verification successful!!!!!" });
     }
     catch (err) {
