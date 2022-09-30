@@ -66,15 +66,17 @@ const googleRedirect = async (req, res, next) => {
         let profile = await User.findOne({ email });
 
         if (!profile) {
-            await User.create({ name, email, verify: true, verificationToken: "" });
+            await User.create({ name, email, verify: true, verificationToken: "1" });
             profile = await User.findOne({ email });
         }
         const payload = { id: profile._id };
         const token = tokenGeneration(payload);
         await User.findByIdAndUpdate(profile._id, { token });
 
+        console.log(token)
+
         return res.redirect(
-            `${process.env.FRONTEND_URL}?token=${token}`
+            `${process.env.FRONTEND_URL}/login/?token=${token}`
         )
     }
     catch (err) {
