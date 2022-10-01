@@ -32,14 +32,10 @@ const googleAuth = async (req, res, next) => {
 const googleRedirect = async (req, res, next) => {
     try {
         const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
-        // console.log("fullURL", fullUrl)
         const urlObj = new URL(fullUrl);
-        // console.log("urlOBJ", urlObj)
 
         const urlParams = queryString.parse(urlObj.search);
-        // console.log("urlPARAMS", urlParams)
         const code = urlParams.code;
-        // console.log("code", code)
 
         const tokenData = await axios({
             url: `https://oauth2.googleapis.com/token`,

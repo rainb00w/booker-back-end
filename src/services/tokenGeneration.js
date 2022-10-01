@@ -10,7 +10,6 @@ const tokenGeneration = (payload) => {
 
 const tokenVerify = (token) => {
     const { id } = jwt.verify(token, SECRET);
-    console.log("!!!", jwt.verify(token, SECRET))
     return id;
 };
 
