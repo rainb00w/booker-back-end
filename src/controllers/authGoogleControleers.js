@@ -58,7 +58,7 @@ const googleRedirect = async (req, res, next) => {
         });
 
         // ? create profile and take token
-        const { email, name } = userData.data;
+        const { email, name, picture } = userData.data;
         let profile = await User.findOne({ email });
 
         if (!profile) {
@@ -70,7 +70,7 @@ const googleRedirect = async (req, res, next) => {
         await User.findByIdAndUpdate(profile._id, { token });
 
         return res.redirect(
-            `${process.env.FRONTEND_URL}/login/?token=${token}&name=${name}`
+            `${process.env.FRONTEND_URL}/login/?token=${token}&name=${name}&avatar=${picture}`
         )
     }
     catch (err) {

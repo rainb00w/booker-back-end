@@ -114,7 +114,7 @@ const getVerify = async (req, res, next) => {
             throw error;
         }
 
-        await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
+        await User.findByIdAndUpdate(user._id, { verify: true });
         res.status(200).json({ message: "Verification successful" });
     }
     catch (err) {
@@ -127,6 +127,12 @@ const repeatVerify = async (req, res, next) => {
     try {
         const { email } = req.body;
         const data = await User.findOne({ email });
+
+        if (!data) {
+            const error = createError(400, "This mail is not registered.");
+            throw error;
+        }
+
         const { verify, verificationToken } = data;
 
         if (verify) {
@@ -191,7 +197,7 @@ const getNewPassword = async (req, res, next) => {
         const user = await User.findOne({ newPasswordToken });
 
         if (!user) {
-            const error = createError(404, "User not found999");
+            const error = createError(404, "User not found");
             throw error;
         }
 
