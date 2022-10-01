@@ -35,7 +35,6 @@ const registration = async (req, res, next) => {
         const hashPassword = await passwordGeneration(password);
         // ? post token
         const verificationToken = v4();
-
         const data = await User.create({ name, email, password: hashPassword, verificationToken });
 
         const mail = {
@@ -78,6 +77,7 @@ const login = async (req, res, next) => {
         await User.findByIdAndUpdate(user._id, { token });
 
         res.status(200).json({token, name: user.name})
+
     }
     catch (err) {
         if (err.message.includes("validation failed")) err.status = 400;
