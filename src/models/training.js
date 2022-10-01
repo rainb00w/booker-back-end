@@ -49,7 +49,6 @@ const schemaAddTraining = Joi.object({
     startDate: Joi.date()
         .label('Training Start Date')
         .iso()
-        .min('now')
         .required(),
 
     finishDate: Joi.date()

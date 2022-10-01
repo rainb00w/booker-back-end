@@ -14,7 +14,10 @@ const addTraining = async (req, res) => {
             }
         }
     }
-    if (new Date(body.finishDate).getTime() - new Date(body.startDate).getTime() > (32 * 24 * 3600 * 1000) || new Date(body.finishDate).getTime() - new Date(body.startDate).getTime() < (24 * 3600 * 1000)) {
+    const date = new Date()
+    const dateUTC = date.setUTCHours(0, 0, 0, 0)
+    if (Date.parse(body.startDate) + (3 * 36000 * 1000) < dateUTC) throw RequestError(400, 'Start Date may not precede today.')
+    if (Date.parse(body.finishDate) - Date.parse(body.startDate) > (32 * 24 * 3600 * 1000) || Date.parse(body.finishDate) - Date.parse(body.startDate) < (24 * 3600 * 1000)) {
         throw RequestError(400, 'Training period should be greater than 1 day and must not exceed 31 days.')
     }
     const startTraining = async () => {
@@ -32,13 +35,15 @@ const addTraining = async (req, res) => {
             startTraining()
         }
         const currentDate = new Date()
-        if (finishDate.getTime() >= currentDate.getTime()) {
-            const difference = finishDate.getTime() - currentDate.getTime()
+        if (new Date(finishDate).getTime() >= currentDate.getTime()) {
+            const difference = new Date(finishDate).getTime() - currentDate.getTime()
             const totalDays = Math.ceil(difference / (1000 * 3600 * 24))
             throw RequestError(403, `Training is in progress. Try again in ${totalDays} days.`)
         } else {
             oldBooks.forEach(async book => {
-                await booksServices.updateBookStatus(book._id, owner, { status: 'toRead' })
+                if (book.status !== 'haveRead') {
+                    await booksServices.updateBookStatus(book._id, owner, { status: 'toRead' })
+                }                
             })
             await trainingServices.deleteTraining(_id)
         }
