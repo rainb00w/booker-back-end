@@ -1,5 +1,5 @@
 const { trainingServices, booksServices } = require('../../services')
-const { RequestError } = require('../../helpers')
+const { RequestError, isYesterdayOrToday } = require('../../helpers')
 
 const updateTraining = async (req, res) => {
     const { _id: owner } = req.user
@@ -10,8 +10,7 @@ const updateTraining = async (req, res) => {
         if (completed) throw RequestError(403, 'Training is completed!')
         if (new Date(body.date).getTime() < new Date(startDate).getTime()) throw RequestError(400, 'Date may not precede training start date')
         if (new Date(body.date).getTime() > new Date(finishDate).getTime()) throw RequestError(400, 'Date is greater than training finish date')
-        const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
-        if (new Date(body.date).getTime() < yesterday.getTime()) throw RequestError(400, 'Date should be today or yesterday')
+        if (!isYesterdayOrToday(body.date)) throw RequestError(400, 'Date should be today or yesterday')
         const totalBooksPagesCount = books.reduce((previousValue, book) => previousValue + book.pages, 0)
         const totalPagesReadCount = results.reduce((previousValue, result) => previousValue + result.pages, 0)
         const totalReadBooksPagesCount = books.reduce((previousValue, book) => {
