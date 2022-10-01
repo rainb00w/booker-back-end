@@ -8,7 +8,7 @@ const userSchema = Schema({
     },
     password: {
         type: String,
-        minlength: 6
+        minlength: 5
     },
     email: {
         type: String,
@@ -27,6 +27,14 @@ const userSchema = Schema({
         type: String,
         required: true,
     },
+    newPassword: {
+        type: String,
+        default: ""
+    },
+    newPasswordToken: {
+        type: String,
+        default: ""
+    }
     
 });
 
