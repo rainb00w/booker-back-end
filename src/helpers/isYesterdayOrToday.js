@@ -1,18 +1,16 @@
 function createTodayUTC() {
-    const dateObject = new Date()
-    const UTC = new Date(dateObject.getUTCFullYear(),
-              dateObject.getUTCMonth(), dateObject.getUTCDate(),
-              0, 0, 0, 0);
-   return UTC;
+    const myDate = new Date()
+    const now = new Date(Date.UTC(myDate.getFullYear(),myDate.getMonth(), myDate.getDate()))
+   return now;
 }
 
 function isYesterdayOrToday(date) {
     const yesterday = createTodayUTC().setDate(createTodayUTC().getDate() - 1)
-    const compareDate = new Date(date)
-    if (yesterday <= compareDate.getTime()) {
+    const compareDate = Date.parse(date)
+    if (yesterday <= compareDate) {
         return true
     }
     return false
 }
 
-module.exports = isYesterdayOrToday
+module.exports = { isYesterdayOrToday, createTodayUTC }
