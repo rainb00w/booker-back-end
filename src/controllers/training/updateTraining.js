@@ -8,8 +8,8 @@ const updateTraining = async (req, res) => {
     if (currentTraining) {
         const { _id, results, books, startDate, completed, finishDate } = currentTraining
         if (completed) throw RequestError(403, 'Training is completed!')
-        if (new Date(body.date).getTime() < new Date(startDate).getTime()) throw RequestError(400, 'Date may not precede training start date')
-        if (new Date(body.date).getTime() > new Date(finishDate).getTime()) throw RequestError(400, 'Date is greater than training finish date')
+        if (Date.parse(body.date) < Date.parse(startDate)) throw RequestError(400, 'Date may not precede training start date')
+        if (Date.parse(body.date) > Date.parse(finishDate)) throw RequestError(400, 'Date is greater than training finish date')
         if (!isYesterdayOrToday(body.date)) throw RequestError(400, 'Date should be today or yesterday')
         const totalBooksPagesCount = books.reduce((previousValue, book) => previousValue + book.pages, 0)
         const totalPagesReadCount = results.reduce((previousValue, result) => previousValue + result.pages, 0)
