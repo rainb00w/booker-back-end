@@ -4,7 +4,6 @@ const { BASE_URL } = process.env;
 
 const urlNewPasswordToken = (passwordToken) => { 
     const urlPath = `
-    <h3>Subject: Books Reading Application Password Reset</h3>
     <p>Шановний користувач!</p>
     <p>Створений запит на зміну пароля Вашого облікового запису застосунку Books Reading</p>
     <p>Якщо даний запит створений не Вами, то інша людина ввела Вашу адресу електронної пошти та новий пароль у форму відновлення втраченого пароля. Якщо така людина не має доступу до Вашої скриньки електронної пошти, то не зможе змінити Ваш пароль.</p>
@@ -12,8 +11,11 @@ const urlNewPasswordToken = (passwordToken) => {
     <a target="_blank" href="${BASE_URL}/api/user/forgotPassword/${passwordToken}">
     Натисніть, щоб підтвердити зміну пароля
     </a>
-    <p>Є запитання? Потрібна допомога? Зверніться до нас за адресою <a>griffon.aneroid-0a@icloud.com</a></p>
-    <p>З повагою Books Reading Application Team</p>
+    <p>Є запитання? Потрібна допомога? Зверніться до нас за адресою <a href="mailto:griffon.aneroid-0a@icloud.com">griffon.aneroid-0a@icloud.com</a></p>
+    <p>З повагою</p>
+    <p>Books Reading Application Team</p>
+
+    <p>-----------------------------</p>
 
     <p>Dear User,</p>
     <p>A request was made to change password for Books Reading Application account.</p>
@@ -22,8 +24,9 @@ const urlNewPasswordToken = (passwordToken) => {
     <a target="_blank" href="${BASE_URL}/api/user/forgotPassword/${passwordToken}">
     Click to confirm password change
     </a>
-    <p>Have questions? Need help? Contact us at <a>griffon.aneroid-0a@icloud.com</a></p>
-    <p>Sincerely, Books Reading Application Team</p>
+    <p>Have questions? Need help? Contact us at <a href="mailto:griffon.aneroid-0a@icloud.com">griffon.aneroid-0a@icloud.com</a></p>
+    <p>Sincerely,</p>
+    <p>Books Reading Application Team</p>
     `;
     return urlPath;
 };

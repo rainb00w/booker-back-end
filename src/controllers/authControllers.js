@@ -39,7 +39,7 @@ const registration = async (req, res, next) => {
 
         const mail = {
             to: email,
-            subject: `Confirm email`,
+            subject: `Verify Your Books Reading Account`,
             html: urlVereficationToken(verificationToken)
         };
         await sendMail(mail);
@@ -142,7 +142,7 @@ const repeatVerify = async (req, res, next) => {
 
         const mail = {
             to: email,
-            subject: `Confirm email`,
+            subject: `Verify Your Books Reading Account`,
             html: urlVereficationToken(verificationToken)
         };
         await sendMail(mail);
@@ -176,7 +176,7 @@ const forgotPassword = async (req, res, next) => {
     
         const mail = {
             to: email,
-            subject: `Confirm change your password`,
+            subject: `Books Reading Password Reset Confirmation`,
             html: urlNewPasswordToken(newPasswordToken)
         };
         await sendMail(mail);
