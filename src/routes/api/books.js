@@ -5,6 +5,7 @@ const {
   addBookValidation,
   updateStatesValidation,
   updateResumeValidation,
+  editBookValidation,
 } = require('../../middlewares/joi/joiBooksValidation');
 
 const authentificate = require('../../middlewares/autentificate');
@@ -15,6 +16,8 @@ const {
   addBookController,
   updateBookStatusController,
   updateBookResumeController,
+  editBookController,
+  removeBookController,
 } = require('../../controllers/booksController');
 
 router.use(authentificate);
@@ -36,5 +39,9 @@ router.put(
   updateResumeValidation,
   updateBookResumeController
 );
+
+router.put('/edit/:bookId', editBookValidation, editBookController);
+
+router.delete('/:bookId', removeBookController);
 
 module.exports = router;

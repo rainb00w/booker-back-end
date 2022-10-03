@@ -4,6 +4,8 @@ const {
   addBook,
   updateBookStatus,
   updateBookResume,
+  editBook,
+  removeBook,
 } = require('../services/booksServices');
 
 const listBooksController = async (req, res, next) => {
@@ -36,8 +38,8 @@ const addBookController = async (req, res, next) => {
   try {
     const { _id: owner } = req.user;
     const { title, author, year, pages } = req.body;
-    addBook({ title, author, year, pages, owner });
-    res.json({ status: 'Success' });
+    const book = await addBook({ title, author, year, pages, owner });
+    res.json({ status: 'Success', code: 200, payload: { book } });
   } catch (err) {
     next(err);
   }
@@ -48,7 +50,7 @@ const updateBookStatusController = async (req, res, next) => {
     const { _id: owner } = req.user;
     const bookId = req.params.bookId;
     const { status } = req.body;
-    updateBookStatus(bookId, owner, { status });
+    await updateBookStatus(bookId, owner, { status });
     res.json({ status: 'Success' });
   } catch (err) {
     next(err);
@@ -60,7 +62,30 @@ const updateBookResumeController = async (req, res, next) => {
     const { _id: owner } = req.user;
     const bookId = req.params.bookId;
     const { resume, rating } = req.body;
-    updateBookResume(bookId, owner, { resume, rating });
+    await updateBookResume(bookId, owner, { resume, rating });
+    res.json({ status: 'Success' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const editBookController = async (req, res, next) => {
+  try {
+    const { _id: owner } = req.user;
+    const bookId = req.params.bookId;
+    const bookData = req.body;
+    await editBook(bookId, owner, bookData);
+    res.json({ status: 'success', code: 200, payload: { bookData } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const removeBookController = async (req, res) => {
+  try {
+    const { _id: owner } = req.user;
+    const bookId = req.params.bookId;
+    await removeBook({ bookId, owner });
     res.json({ status: 'Success' });
   } catch (err) {
     next(err);
@@ -73,4 +98,6 @@ module.exports = {
   addBookController,
   updateBookStatusController,
   updateBookResumeController,
+  editBookController,
+  removeBookController,
 };

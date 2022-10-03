@@ -11,19 +11,32 @@ const getById = async ({ bookId, owner }) => {
 };
 
 const addBook = async ({ title, author, year, pages, owner }) => {
-  const contact = new Book({ title, author, year, pages, owner });
-  await contact.save();
+  const book = new Book({ title, author, year, pages, owner });
+  const newBook = await book.save();
+  return newBook;
 };
 
 const updateBookStatus = async (bookId, owner, { status }) => {
   await Book.findByIdAndUpdate({ _id: bookId, owner }, { $set: { status } });
 };
 
-const updateBookResume = async (contactId, owner, { resume, rating }) => {
+const updateBookResume = async (bookId, owner, { resume, rating }) => {
   await Book.findByIdAndUpdate(
-    { _id: contactId, owner },
+    { _id: bookId, owner },
     { $set: { resume, rating } }
   );
+};
+
+const editBook = async (contactId, owner, bookData) => {
+  const book = await Book.findByIdAndUpdate(
+    { _id: contactId, owner },
+    { $set: bookData }
+  );
+  return book;
+};
+
+const removeBook = async ({ bookId, owner }) => {
+  await Book.findByIdAndRemove({ _id: bookId, owner });
 };
 
 module.exports = {
@@ -32,4 +45,6 @@ module.exports = {
   addBook,
   updateBookStatus,
   updateBookResume,
+  editBook,
+  removeBook,
 };
