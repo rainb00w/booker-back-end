@@ -225,7 +225,7 @@
     "/api/books/{bookId}": {
       "get": {
         "tags": ["Books"],
-        "summary": "Add book",
+        "summary": "Find book by id",
         "parameters": [
           {
             "in": "path",
@@ -459,7 +459,7 @@
             "content": {}
           },
           "403": {
-            "description": "Training is in progress",
+            "description": "Training is completed!",
             "content": {}
           }
         }
@@ -521,6 +521,30 @@
                 "example": null
               },
 
+              "verify": {
+                "type": null,
+                "description": "if users mail is verified",
+                "example": null
+              },
+
+              "verificationToken": {
+                "type": "string",
+                "description": "token to get varification",
+                "example": "90848095-2aa5-4930-b148-d2e273b3d534"
+              },
+
+              "newPassword": {
+                "type": "string",
+                "description": "new password if user dont know password",
+                "example": ""
+              },
+
+              "newPasswordToken": {
+                "type": "string",
+                "description": "token to confirm new password",
+                "example": ""
+              },
+
               "_id": {
                 "type": "string",
                 "description": "User's id",
@@ -533,10 +557,14 @@
         "example": {
           "data": {
             "name": "Mango",
-            "password": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm",
+            "password": "$2b$10$hzBbMp/LXOdehW23fGBNT.v76O9AM5fepJGDdlaJgk8eSAMGiBaaG",
             "email": "user@example.com",
             "token": null,
-            "_id": "6313700a788308a1f5ee225"
+            "verify": false,
+            "verificationToken": "90848095-2aa5-4930-b148-d2e273b3d534",
+            "newPassword": "",
+            "newPasswordToken": "",
+            "_id": "6339ed0a66fcaa338445957a"
           }
         }
       },
@@ -557,6 +585,7 @@
           }
         }
       },
+
       "LoginResponse": {
         "type": "object",
 
@@ -565,10 +594,18 @@
             "type": "string",
             "description": "User's token",
             "example": "7c65b154-f218-4417-a0a8-b2609d9c0de4"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's token",
+            "example": "Mango"
           }
         },
 
-        "example": { "token": "7c65b154-f218-4417-a0a8-b2609d9c0de4" }
+        "example": {
+          "token": "7c65b154-f218-4417-a0a8-b2609d9c0de4",
+          "name": "Mango"
+        }
       },
 
       "CurrentResponse": {
