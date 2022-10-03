@@ -81,7 +81,7 @@ const editBookController = async (req, res, next) => {
   }
 };
 
-const removeBookController = async (req, res) => {
+const removeBookController = async (req, res, next) => {
   try {
     const { _id: owner } = req.user;
     const bookId = req.params.bookId;
