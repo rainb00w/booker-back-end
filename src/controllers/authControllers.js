@@ -115,7 +115,8 @@ const getVerify = async (req, res, next) => {
         }
 
         await User.findByIdAndUpdate(user._id, { verify: true });
-        res.status(200).json({ message: "Verification successful" });
+        // res.status(200).json({ message: "Verification successful" });
+        res.redirect('https://rainb00w.github.io/booker-front-end/login');
     }
     catch (err) {
         next(err);
@@ -204,7 +205,8 @@ const getNewPassword = async (req, res, next) => {
         const password = user.newPassword
 
         await User.findByIdAndUpdate(user._id, { password, newPassword: "", newPasswordToken: "" });
-        res.status(200).json({ message: "Congratulations. You have confirmed the new password!" });
+        // res.status(200).json({ message: "Congratulations. You have confirmed the new password!" });
+        res.redirect('https://rainb00w.github.io/booker-front-end/login');
     }
     catch (err) {
         next(err)
