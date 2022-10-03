@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "title": "Booker API",
-    "description": "Showing off swagger-ui-express",
+    "description": "Booker API for all routes",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -129,6 +129,137 @@
       }
     },
 
+    "/api/user/verify/{verificationToken}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Verify user email",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verificationToken",
+            "type": "string",
+            "example": "70c8de25-b20b-4a27-b63c-91686c99c9d3",
+            "description": "verificationToken of user",
+            "required": true
+          }
+        ],
+
+        "responses": {
+          "302": {
+            "description": "Redirect to login route"
+          },
+
+          "404": {
+            "description": "User not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/user/verify": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "resend verificationToken to email",
+        "parameters": [],
+        "requestBody": {
+          "description": "Object for resend verificationToken",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostVerifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostVerifyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "This mail is not registered or Verification has already been passed",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/user/forgotPassword": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Post newPassword",
+        "parameters": [],
+        "requestBody": {
+          "description": "newPassword's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchForgotPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchForgotPasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "missing required name field or the field did not pass validation",
+            "content": {}
+          },
+
+          "401": {
+            "description": "This mail is not registered or Email not verify",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/user/forgotPassword/{newPasswordToken}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Confirm new password",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "newPasswordToken",
+            "type": "string",
+            "example": "6fe48f15-6cbe-4275-9540-b8a04b3b264d",
+            "description": "newPasswordToken",
+            "required": true
+          }
+        ],
+
+        "responses": {
+          "302": {
+            "description": "Redirect to login route"
+          },
+
+          "404": {
+            "description": "User not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
     "/api/user/current": {
       "get": {
         "tags": ["User"],
@@ -225,7 +356,7 @@
     "/api/books/{bookId}": {
       "get": {
         "tags": ["Books"],
-        "summary": "Add book",
+        "summary": "Find book by id",
         "parameters": [
           {
             "in": "path",
@@ -245,6 +376,39 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetBookByIdResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Books"],
+        "summary": "Delete book by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "string",
+            "example": "633430de05d976545f184b08",
+            "description": "id of the book",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBookByIdResponse"
                 }
               }
             }
@@ -339,6 +503,53 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PutResumeResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/books/edit/{bookId}": {
+      "put": {
+        "tags": ["Books"],
+        "summary": "update title, author or other properties of the book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "example": "633430de05d976545f184b08",
+            "type": "string",
+            "description": "id of the book",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "new properties of the book",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutEditRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutEditResponse"
                 }
               }
             }
@@ -459,7 +670,7 @@
             "content": {}
           },
           "403": {
-            "description": "Training is in progress",
+            "description": "Training is completed!",
             "content": {}
           }
         }
@@ -521,6 +732,30 @@
                 "example": null
               },
 
+              "verify": {
+                "type": null,
+                "description": "if users mail is verified",
+                "example": null
+              },
+
+              "verificationToken": {
+                "type": "string",
+                "description": "token to get varification",
+                "example": "90848095-2aa5-4930-b148-d2e273b3d534"
+              },
+
+              "newPassword": {
+                "type": "string",
+                "description": "new password if user dont know password",
+                "example": ""
+              },
+
+              "newPasswordToken": {
+                "type": "string",
+                "description": "token to confirm new password",
+                "example": ""
+              },
+
               "_id": {
                 "type": "string",
                 "description": "User's id",
@@ -533,10 +768,14 @@
         "example": {
           "data": {
             "name": "Mango",
-            "password": "$2a$10$brs0hDVMGOWgv6D.qTD/vOhUbBL/NXWMPyNyervXeYeY0pRche.Hm",
+            "password": "$2b$10$hzBbMp/LXOdehW23fGBNT.v76O9AM5fepJGDdlaJgk8eSAMGiBaaG",
             "email": "user@example.com",
             "token": null,
-            "_id": "6313700a788308a1f5ee225"
+            "verify": false,
+            "verificationToken": "90848095-2aa5-4930-b148-d2e273b3d534",
+            "newPassword": "",
+            "newPasswordToken": "",
+            "_id": "6339ed0a66fcaa338445957a"
           }
         }
       },
@@ -557,6 +796,7 @@
           }
         }
       },
+
       "LoginResponse": {
         "type": "object",
 
@@ -565,10 +805,50 @@
             "type": "string",
             "description": "User's token",
             "example": "7c65b154-f218-4417-a0a8-b2609d9c0de4"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's token",
+            "example": "Mango"
           }
         },
 
-        "example": { "token": "7c65b154-f218-4417-a0a8-b2609d9c0de4" }
+        "example": {
+          "token": "7c65b154-f218-4417-a0a8-b2609d9c0de4",
+          "name": "Mango"
+        }
+      },
+
+      "PatchForgotPasswordRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+
+      "PatchForgotPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "succses",
+            "example": "We have sent you a link to your email to confirm your new password."
+          }
+        },
+
+        "example": {
+          "message": "We have sent you a link to your email to confirm your new password."
+        }
       },
 
       "CurrentResponse": {
@@ -592,9 +872,36 @@
         }
       },
 
+      "PostVerifyRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          }
+        }
+      },
+
+      "PostVerifyResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "succses",
+            "example": "Verification email sent"
+          }
+        },
+
+        "example": {
+          "message": "Verification email sent"
+        }
+      },
+
       "PostBookRequest": {
         "type": "object",
-        "required": ["title", "author", "year", "pages"],
+        "required": ["title", "author", "pages"],
         "properties": {
           "title": {
             "type": "string",
@@ -626,11 +933,80 @@
             "type": "string",
             "description": "succses",
             "example": "Succses"
+          },
+          "code": {
+            "type": "integer",
+            "description": "code",
+            "example": 200
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "book": {
+                "type": "object",
+
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Book's title",
+                    "example": "The Art of War"
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Book's author",
+                    "example": "Sun Tzu"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "description": "year of publication",
+                    "example": 1974
+                  },
+                  "pages": {
+                    "type": "integer",
+                    "description": "pages in book",
+                    "example": 100
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "curreny status of the book",
+                    "example": "toRead"
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "description": "rating of the book",
+                    "example": 0
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "owner's (user's) id",
+                    "example": "6331e0bd7d50cafaf02cf8c8"
+                  },
+                  "_id": {
+                    "type": "string",
+                    "description": "id of the book",
+                    "example": "633b1aae155b3020faa54d9e"
+                  }
+                }
+              }
+            }
           }
         },
 
         "example": {
-          "status": "Succses"
+          "status": "Success",
+          "code": 200,
+          "payload": {
+            "book": {
+              "title": "The Art of War",
+              "author": "Sun Tzu",
+              "year": 1974,
+              "pages": 100,
+              "status": "toRead",
+              "rating": 0,
+              "owner": "6337283619ffb3c7da56c9a4",
+              "_id": "633b1aae155b3020faa54d9e"
+            }
+          }
         }
       },
 
@@ -680,10 +1056,20 @@
                       "description": "curreny status of the book",
                       "example": "toRead"
                     },
+                    "rating": {
+                      "type": "integer",
+                      "description": "rating of the book",
+                      "example": 0
+                    },
                     "owner": {
                       "type": "string",
                       "description": "owner's (user's) id",
                       "example": "6331e0bd7d50cafaf02cf8c8"
+                    },
+                    "_id": {
+                      "type": "string",
+                      "description": "id of the book",
+                      "example": "633b1aae155b3020faa54d9e"
                     }
                   }
                 }
@@ -702,7 +1088,8 @@
                 "title": "The Art of War",
                 "author": "Sun Tzu",
                 "year": 1974,
-                "page": 100,
+                "pages": 100,
+                "rating": 0,
                 "status": "toRead",
                 "owner": "6331e0bd7d50cafaf02cf8c8"
               },
@@ -711,7 +1098,8 @@
                 "title": "1984",
                 "author": "George Orwell",
                 "year": 1949,
-                "page": 100,
+                "pages": 100,
+                "rating": 0,
                 "status": "toRead",
                 "owner": "6331e0bd7d50cafaf02cf8c8"
               }
@@ -763,6 +1151,11 @@
                     "description": "pages in book",
                     "example": 100
                   },
+                  "rating": {
+                    "type": "integer",
+                    "description": "rating of the book",
+                    "example": 0
+                  },
                   "status": {
                     "type": "string",
                     "description": "curreny status of the book",
@@ -788,11 +1181,27 @@
               "title": "The Art of War",
               "author": "Sun Tzu",
               "year": 1974,
-              "page": 100,
+              "pages": 100,
+              "rating": 0,
               "status": "toRead",
               "owner": "6331e0bd7d50cafaf02cf8c8"
             }
           }
+        }
+      },
+
+      "DeleteBookByIdResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          }
+        },
+
+        "example": {
+          "status": "Succses"
         }
       },
 
@@ -852,6 +1261,94 @@
             "type": "integer",
             "description": "new rating of the book",
             "example": 4
+          }
+        }
+      },
+
+      "PutEditRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Book's title",
+            "example": "The Art of War"
+          },
+          "author": {
+            "type": "string",
+            "description": "Book's author",
+            "example": "Sun Tzu"
+          },
+          "year": {
+            "type": "integer",
+            "description": "year of publication",
+            "example": 1974
+          },
+          "pages": {
+            "type": "integer",
+            "description": "pages in book",
+            "example": 100
+          }
+        }
+      },
+
+      "PutEditResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          },
+          "code": {
+            "type": "integer",
+            "description": "code",
+            "example": 200
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "book": {
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Book's title",
+                    "example": "The Art of War"
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Book's author",
+                    "example": "Sun Tzu"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "description": "year of publication",
+                    "example": 1974
+                  },
+                  "pages": {
+                    "type": "integer",
+                    "description": "pages in book",
+                    "example": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "example": {
+          "status": "Succses",
+          "code": 200,
+          "payload": {
+            "book": {
+              "_id": "633430de05d976545f184b08",
+              "title": "The Art of War",
+              "author": "Sun Tzu",
+              "year": 1974,
+              "pages": 100,
+              "rating": 0,
+              "status": "toRead",
+              "owner": "6331e0bd7d50cafaf02cf8c8"
+            }
           }
         }
       },
