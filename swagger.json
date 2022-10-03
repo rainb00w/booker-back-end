@@ -386,6 +386,39 @@
             "content": {}
           }
         }
+      },
+      "delete": {
+        "tags": ["Books"],
+        "summary": "Delete book by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "string",
+            "example": "633430de05d976545f184b08",
+            "description": "id of the book",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBookByIdResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
       }
     },
 
@@ -470,6 +503,53 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PutResumeResponse"
+                }
+              }
+            }
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/books/edit/{bookId}": {
+      "put": {
+        "tags": ["Books"],
+        "summary": "update title, author or other properties of the book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "example": "633430de05d976545f184b08",
+            "type": "string",
+            "description": "id of the book",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "new properties of the book",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutEditRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutEditResponse"
                 }
               }
             }
@@ -821,7 +901,7 @@
 
       "PostBookRequest": {
         "type": "object",
-        "required": ["title", "author", "year", "pages"],
+        "required": ["title", "author", "pages"],
         "properties": {
           "title": {
             "type": "string",
@@ -853,11 +933,80 @@
             "type": "string",
             "description": "succses",
             "example": "Succses"
+          },
+          "code": {
+            "type": "integer",
+            "description": "code",
+            "example": 200
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "book": {
+                "type": "object",
+
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Book's title",
+                    "example": "The Art of War"
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Book's author",
+                    "example": "Sun Tzu"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "description": "year of publication",
+                    "example": 1974
+                  },
+                  "pages": {
+                    "type": "integer",
+                    "description": "pages in book",
+                    "example": 100
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "curreny status of the book",
+                    "example": "toRead"
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "description": "rating of the book",
+                    "example": 0
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "owner's (user's) id",
+                    "example": "6331e0bd7d50cafaf02cf8c8"
+                  },
+                  "_id": {
+                    "type": "string",
+                    "description": "id of the book",
+                    "example": "633b1aae155b3020faa54d9e"
+                  }
+                }
+              }
+            }
           }
         },
 
         "example": {
-          "status": "Succses"
+          "status": "Success",
+          "code": 200,
+          "payload": {
+            "book": {
+              "title": "The Art of War",
+              "author": "Sun Tzu",
+              "year": 1974,
+              "pages": 100,
+              "status": "toRead",
+              "rating": 0,
+              "owner": "6337283619ffb3c7da56c9a4",
+              "_id": "633b1aae155b3020faa54d9e"
+            }
+          }
         }
       },
 
@@ -907,10 +1056,20 @@
                       "description": "curreny status of the book",
                       "example": "toRead"
                     },
+                    "rating": {
+                      "type": "integer",
+                      "description": "rating of the book",
+                      "example": 0
+                    },
                     "owner": {
                       "type": "string",
                       "description": "owner's (user's) id",
                       "example": "6331e0bd7d50cafaf02cf8c8"
+                    },
+                    "_id": {
+                      "type": "string",
+                      "description": "id of the book",
+                      "example": "633b1aae155b3020faa54d9e"
                     }
                   }
                 }
@@ -929,7 +1088,8 @@
                 "title": "The Art of War",
                 "author": "Sun Tzu",
                 "year": 1974,
-                "page": 100,
+                "pages": 100,
+                "rating": 0,
                 "status": "toRead",
                 "owner": "6331e0bd7d50cafaf02cf8c8"
               },
@@ -938,7 +1098,8 @@
                 "title": "1984",
                 "author": "George Orwell",
                 "year": 1949,
-                "page": 100,
+                "pages": 100,
+                "rating": 0,
                 "status": "toRead",
                 "owner": "6331e0bd7d50cafaf02cf8c8"
               }
@@ -990,6 +1151,11 @@
                     "description": "pages in book",
                     "example": 100
                   },
+                  "rating": {
+                    "type": "integer",
+                    "description": "rating of the book",
+                    "example": 0
+                  },
                   "status": {
                     "type": "string",
                     "description": "curreny status of the book",
@@ -1015,11 +1181,27 @@
               "title": "The Art of War",
               "author": "Sun Tzu",
               "year": 1974,
-              "page": 100,
+              "pages": 100,
+              "rating": 0,
               "status": "toRead",
               "owner": "6331e0bd7d50cafaf02cf8c8"
             }
           }
+        }
+      },
+
+      "DeleteBookByIdResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          }
+        },
+
+        "example": {
+          "status": "Succses"
         }
       },
 
@@ -1079,6 +1261,94 @@
             "type": "integer",
             "description": "new rating of the book",
             "example": 4
+          }
+        }
+      },
+
+      "PutEditRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Book's title",
+            "example": "The Art of War"
+          },
+          "author": {
+            "type": "string",
+            "description": "Book's author",
+            "example": "Sun Tzu"
+          },
+          "year": {
+            "type": "integer",
+            "description": "year of publication",
+            "example": 1974
+          },
+          "pages": {
+            "type": "integer",
+            "description": "pages in book",
+            "example": 100
+          }
+        }
+      },
+
+      "PutEditResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "succses",
+            "example": "Succses"
+          },
+          "code": {
+            "type": "integer",
+            "description": "code",
+            "example": 200
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "book": {
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Book's title",
+                    "example": "The Art of War"
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Book's author",
+                    "example": "Sun Tzu"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "description": "year of publication",
+                    "example": 1974
+                  },
+                  "pages": {
+                    "type": "integer",
+                    "description": "pages in book",
+                    "example": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "example": {
+          "status": "Succses",
+          "code": 200,
+          "payload": {
+            "book": {
+              "_id": "633430de05d976545f184b08",
+              "title": "The Art of War",
+              "author": "Sun Tzu",
+              "year": 1974,
+              "pages": 100,
+              "rating": 0,
+              "status": "toRead",
+              "owner": "6331e0bd7d50cafaf02cf8c8"
+            }
           }
         }
       },
