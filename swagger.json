@@ -129,6 +129,137 @@
       }
     },
 
+    "/api/user/verify/{verificationToken}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Verify user email",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verificationToken",
+            "type": "string",
+            "example": "70c8de25-b20b-4a27-b63c-91686c99c9d3",
+            "description": "verificationToken of user",
+            "required": true
+          }
+        ],
+
+        "responses": {
+          "302": {
+            "description": "Redirect to login route"
+          },
+
+          "404": {
+            "description": "User not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/user/verify": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "resend verificationToken to email",
+        "parameters": [],
+        "requestBody": {
+          "description": "Object for resend verificationToken",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostVerifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostVerifyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "This mail is not registered or Verification has already been passed",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/user/forgotPassword": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Post newPassword",
+        "parameters": [],
+        "requestBody": {
+          "description": "newPassword's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchForgotPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchForgotPasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "missing required name field or the field did not pass validation",
+            "content": {}
+          },
+
+          "401": {
+            "description": "This mail is not registered or Email not verify",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/user/forgotPassword/{newPasswordToken}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Confirm new password",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "newPasswordToken",
+            "type": "string",
+            "example": "6fe48f15-6cbe-4275-9540-b8a04b3b264d",
+            "description": "newPasswordToken",
+            "required": true
+          }
+        ],
+
+        "responses": {
+          "302": {
+            "description": "Redirect to login route"
+          },
+
+          "404": {
+            "description": "User not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
     "/api/user/current": {
       "get": {
         "tags": ["User"],
@@ -608,6 +739,38 @@
         }
       },
 
+      "PatchForgotPasswordRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+
+      "PatchForgotPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "succses",
+            "example": "We have sent you a link to your email to confirm your new password."
+          }
+        },
+
+        "example": {
+          "message": "We have sent you a link to your email to confirm your new password."
+        }
+      },
+
       "CurrentResponse": {
         "type": "object",
         "properties": {
@@ -626,6 +789,33 @@
         "example": {
           "name": "Mango",
           "email": "user@example.com"
+        }
+      },
+
+      "PostVerifyRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          }
+        }
+      },
+
+      "PostVerifyResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "succses",
+            "example": "Verification email sent"
+          }
+        },
+
+        "example": {
+          "message": "Verification email sent"
         }
       },
 
