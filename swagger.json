@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "title": "Booker API",
-    "description": "Showing off swagger-ui-express",
+    "description": "Booker API for all routes",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
