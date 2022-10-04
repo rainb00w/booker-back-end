@@ -2,10 +2,11 @@ const app = require('./src/app');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const { MAIN_PORT = 3001, DB_HOST } = process.env;
+const { DB_HOST } = process.env;
+const PORT = process.env.PORT || 3000;
 
 mongoose.connect(DB_HOST)
-    .then(() => app.listen(MAIN_PORT || 3001, () => {
+    .then(() => app.listen(PORT, () => {
         console.log(`Database connection successful on port ${MAIN_PORT}`)
     })
     )
