@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 mongoose.connect(DB_HOST)
     .then(() => app.listen(PORT, () => {
-        console.log(`Database connection successful on port ${MAIN_PORT}`)
+        console.log(`Database connection successful on port ${PORT}`)
     })
     )
     .catch(err => {
