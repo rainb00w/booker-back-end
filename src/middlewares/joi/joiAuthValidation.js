@@ -1,12 +1,12 @@
 const joi = require('joi');
 
 module.exports = {
-     registrationValidation: (req, res, next) => {
+    registrationValidation: (req, res, next) => {
         const schema = joi.object({
             name: joi.string()
                 .min(3)
                 .max(100)
-                .trim(true)
+                .trim()
                 .required(),
             email: joi.string()
                 .min(10)
