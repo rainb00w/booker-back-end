@@ -30,12 +30,13 @@
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
-    "eslint": "7.19.0",
+    "eslint": "^7.19.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "16.0.3",
     "eslint-plugin-import": "2.25.3",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "5.2.0",
+    "eslint-plugin-regexp": "^1.9.0",
     "jest": "^28.1.3",
     "nodemon": "2.0.15"
   },
