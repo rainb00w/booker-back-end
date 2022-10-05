@@ -8,7 +8,7 @@ const authentificate = async (req, res, next) => {
         const { authorization = "" } = req.headers;
         const [bearer, token] = authorization.split(" ");
         if (bearer !== "Bearer") {
-            const error = createError(401, "Not 1 authorized");
+            const error = createError(401, "Not authorized");
             throw error;
         }
 
@@ -17,7 +17,7 @@ const authentificate = async (req, res, next) => {
 
         const user = await User.findById(userId);
         if (!user || user.token === null) {
-            const error = createError(401, "Not 2 authorized");
+            const error = createError(401, "Not authorized");
             throw error;
         }
         req.user = user;
@@ -26,7 +26,7 @@ const authentificate = async (req, res, next) => {
     catch (err) {
         if (!err.status) {
             err.status = 401;
-            err.message = "Not 3 authorized";
+            err.message = "Not authorized";
         }
         next(err);
     }
