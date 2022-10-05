@@ -5,9 +5,11 @@ function createTodayUTC() {
 }
 
 function isYesterdayOrToday(date) {
-    const yesterday = createTodayUTC().setDate(createTodayUTC().getDate() - 1)
+    const now = new Date()
+    const yesterday = now.setDate(now.getDate() - 1)
+    const yesterdayAm = new Date(yesterday).setHours(0, 0, 0, 0)
     const compareDate = Date.parse(date)
-    if (yesterday <= compareDate) {
+    if (yesterdayAm <= compareDate) {
         return true
     }
     return false
