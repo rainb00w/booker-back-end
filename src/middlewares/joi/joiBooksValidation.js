@@ -4,7 +4,7 @@ const addBookValidation = (req, res, next) => {
   const schema = Joi.object({
     title: Joi.string().required(),
     author: Joi.string().required(),
-    year: Joi.number().integer().required(),
+    year: Joi.number().integer(),
     pages: Joi.number().integer().required(),
   });
   const valid = schema.validate(req.body);
