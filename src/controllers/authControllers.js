@@ -57,18 +57,18 @@ const login = async (req, res, next) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            const error = createError(401, "Email or password is wrong");
+            const error = createError(401, "email or password is incorrect");
             throw error;
         }
 
         const compare = await passwordCompare(password, user.password);
         if (!compare) {
-            const error = createError(401, "Email or password is wrong");
+            const error = createError(401, "email or password is incorrect");
             throw error;
         }
 
         if (!user.verify) {
-            const error = createError(401, "Email not verify");
+            const error = createError(401, "this email is not verified");
             throw error;
         }
 
@@ -110,7 +110,7 @@ const getVerify = async (req, res, next) => {
         const user = await User.findOne({ verificationToken });
 
         if (!user) {
-            const error = createError(404, "User not found");
+            const error = createError(404, "user is not found");
             throw error;
         }
 
@@ -130,14 +130,14 @@ const repeatVerify = async (req, res, next) => {
         const data = await User.findOne({ email });
 
         if (!data) {
-            const error = createError(400, "This mail is not registered.");
+            const error = createError(400, "this email is not registred");
             throw error;
         }
 
         const { verify, verificationToken } = data;
 
         if (verify) {
-            const error = createError(400, "Verification has already been passed");
+            const error = createError(400, "this email has already been verified");
             throw error;
         }
 
@@ -163,12 +163,12 @@ const forgotPassword = async (req, res, next) => {
         const newPasswordToken = v4();
     
         if (!user) {
-            const error = createError(401, "This mail is not registered");
+            const error = createError(401, "this email is not registred");
             throw error;
         }
     
         if (!user.verify) {
-            const error = createError(401, "Email not verify");
+            const error = createError(401, "this email is not verified");
             throw error;
         }
     
@@ -198,7 +198,7 @@ const getNewPassword = async (req, res, next) => {
         const user = await User.findOne({ newPasswordToken });
 
         if (!user) {
-            const error = createError(404, "User not found");
+            const error = createError(404, "user is not found");
             throw error;
         }
 
