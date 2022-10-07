@@ -4,7 +4,7 @@ const addBookValidation = (req, res, next) => {
   const schema = Joi.object({
     title: Joi.string().required(),
     author: Joi.string().required(),
-    year: Joi.number().integer().required(),
+    year: Joi.number().integer(),
     pages: Joi.number().integer().required(),
   });
   const valid = schema.validate(req.body);
@@ -33,8 +33,8 @@ const updateStatesValidation = (req, res, next) => {
 
 const updateResumeValidation = (req, res, next) => {
   const schema = Joi.object({
-    rating: Joi.number().integer().greater(0).less(6).required(),
-    resume: Joi.string().required(),
+    rating: Joi.number().integer().greater(0).less(6),
+    resume: Joi.string(),
   });
   const valid = schema.validate(req.body);
 
