@@ -17,12 +17,4 @@ mongoose.connect(DB_HOST)
 
 
 
-    // mongoose.connect(DB_HOST)
-    // .then(() => app.listen(MAIN_PORT, () => {
-    //     console.log(`Database connection successful on port ${MAIN_PORT}`)
-    // })
-    // )
-    // .catch(err => {
-    //     console.error(err)
-    //     process.exit(1)
-    // });
+ 
