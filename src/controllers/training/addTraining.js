@@ -14,8 +14,8 @@ const addTraining = async (req, res, next) => {
             }
         }
     }
-    const now = createTodayUTC()
-    if (Date.parse(body.startDate) < now) throw RequestError(400, 'Start Date may not precede today.')
+    const now = new Date()
+    if (Date.parse(body.startDate) <= now - 23 * 3600 * 1000) throw RequestError(400, 'Start Date may not precede today.')
     if (Date.parse(body.finishDate) - Date.parse(body.startDate) > (32 * 24 * 3600 * 1000) || Date.parse(body.finishDate) - Date.parse(body.startDate) < (24 * 3600 * 1000)) {
         throw RequestError(400, 'Training period should be greater than 1 day and must not exceed 31 days.')
     }
