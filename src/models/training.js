@@ -69,7 +69,6 @@ const schemaUpdateTraining = Joi.object({
     date: Joi.date()
         .label('Reading date')
         .iso()
-        .max('now')
         .required(),
 
     pages: Joi.number()
