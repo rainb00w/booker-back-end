@@ -5,7 +5,20 @@ const addTraining = async (req, res) => {
     const { _id: owner } = req.user
     const { body } = req
     const now = new Date()
-
+    for (const book of body.books) {
+        const originalBook = await booksServices.getById({ bookId: book._id, owner })
+        if (!originalBook) {
+            throw RequestError(400, 'No books found by ids.')
+        } else {
+            if (originalBook.status === 'haveRead') {
+                throw RequestError(400, 'Chosen books have already been read.')
+            }
+        }
+    }
+    if (Date.parse(body.startDate) < (now - (23 * 3600 * 1000))) throw RequestError(400, 'Start Date may not precede today.')
+    if (Date.parse(body.finishDate) - Date.parse(body.startDate) > (32 * 24 * 3600 * 1000) || Date.parse(body.finishDate) - Date.parse(body.startDate) < (24 * 3600 * 1000)) {
+        throw RequestError(400, 'Training period should be greater than 1 day and must not exceed 31 days.')
+    }
     const currentTraining = await trainingServices.getTraining(owner)
     if (currentTraining) {
         const { finishDate, completed, books: oldBooks, _id } = currentTraining
@@ -25,20 +38,6 @@ const addTraining = async (req, res) => {
                 await trainingServices.deleteTraining(_id)
             }
         }
-    }
-    for (const book of body.books) {
-            const originalBook = await booksServices.getById({ bookId: book._id, owner })
-            if (!originalBook) {
-                throw RequestError(400, 'No books found by ids.')
-            } else {
-                if (originalBook.status === 'haveRead') {
-                    throw RequestError(400, 'Chosen books have already been read.')
-                }
-            }
-        }
-    if (Date.parse(body.startDate) < (now - (23 * 3600 * 1000))) throw RequestError(400, 'Start Date may not precede today.')
-    if (Date.parse(body.finishDate) - Date.parse(body.startDate) > (32 * 24 * 3600 * 1000) || Date.parse(body.finishDate) - Date.parse(body.startDate) < (24 * 3600 * 1000)) {
-        throw RequestError(400, 'Training period should be greater than 1 day and must not exceed 31 days.')
     }
      body.books.forEach(async book => {
         await booksServices.updateBookStatus(book._id, owner, { status: 'reading' })
