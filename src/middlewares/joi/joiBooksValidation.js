@@ -33,8 +33,8 @@ const updateStatesValidation = (req, res, next) => {
 
 const updateResumeValidation = (req, res, next) => {
   const schema = Joi.object({
-    rating: Joi.number().integer().greater(0).less(6),
-    resume: Joi.string(),
+    rating: Joi.number().integer().min(0).max(5),
+    resume: Joi.string().allow(''),
   });
   const valid = schema.validate(req.body);
 

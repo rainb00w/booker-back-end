@@ -21,18 +21,10 @@ const updateBookStatus = async (bookId, owner, { status }) => {
 };
 
 const updateBookResume = async (bookId, owner, { resume, rating }) => {
-  if (!resume) {
-    await Book.findByIdAndUpdate({ _id: bookId, owner }, { $set: { rating } });
-  }
-  if (!rating) {
-    await Book.findByIdAndUpdate({ _id: bookId, owner }, { $set: { resume } });
-  }
-  if (rating && resume) {
-    await Book.findByIdAndUpdate(
-      { _id: bookId, owner },
-      { $set: { resume, rating } }
-    );
-  }
+  await Book.findByIdAndUpdate(
+    { _id: bookId, owner },
+    { $set: { resume, rating } }
+  );
 };
 
 const editBook = async (contactId, owner, bookData) => {
