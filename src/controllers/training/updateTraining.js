@@ -19,7 +19,10 @@ const updateTraining = async (req, res) => {
         }
         return previousValue
     }, 0)
-    if (totalBooksPagesCount - totalPagesReadCount < Number(body.pages)) throw RequestError(400, 'Provided pages count exceeds number of unread pages!')
+    if (totalBooksPagesCount - totalPagesReadCount < Number(body.pages)) {
+        const pagesRemained = totalBooksPagesCount - totalPagesReadCount
+        throw RequestError(400, `Provided pages count exceeds number of unread ${pagesRemained} pages!`)
+    }
     if (totalPagesReadCount + Number(body.pages) >= totalBooksPagesCount) {
         for (const book of books) {
             const originalBook = await booksServices.getById({ bookId: book._id, owner })
