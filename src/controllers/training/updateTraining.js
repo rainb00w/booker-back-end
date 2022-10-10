@@ -33,12 +33,12 @@ const updateTraining = async (req, res) => {
         res.json(await trainingServices.updateTraining(_id, { $push: { results: { ...body } }, completed: true }))
     } else {
         let pagesReadCount = totalPagesReadCount - totalReadBooksPagesCount + Number(body.pages)
-        for (let i = 0; i < books.length; i += 1) {
-            if (books[i].status === 'haveRead') continue
-            if (pagesReadCount >= books[i].pages) {
-                await booksServices.updateBookStatus(books[i]._id, owner, { status: 'haveRead' })
-                pagesReadCount -= books[i].pages
-            }
+        for (const book of books) {
+            if (book.status === 'haveRead') continue
+            if (pagesReadCount >= book.pages) {
+                await booksServices.updateBookStatus(book._id, owner, { status: 'haveRead' })
+                pagesReadCount -= book.pages
+            } else break
         }
         res.json(await trainingServices.addResults(_id, body))
     }
